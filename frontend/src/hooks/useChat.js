@@ -1,52 +1,43 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { toast } from "react-hot-toast";
-import { useOrchestration } from "./useOrchestration";
 import { useWebSocket } from "./useWebSocket";
+import { useThinkingProcess } from "./useThinkingProcess";
 import { handleAPIError } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
 
 /**
  * 채팅 기능을 위한 커스텀 훅
- * @param {string} projectId - 프로젝트 ID
- * @param {string} projectName - 프로젝트 이름
  * @param {Array} promptCards - 프롬프트 카드 배열
+ * @param {string} conversationId - 대화 ID (선택적)
+ * @param {Function} createConversationFn - 대화 생성 함수
+ * @param {Function} setCurrentConversationFn - 현재 대화 설정 함수
+ * @param {Function} addConversationFn - 대화 추가 함수
  * @returns {Object} - 채팅 관련 상태와 함수들
  */
 export const useChat = (
-  projectId,
-  projectName,
   promptCards = [],
   conversationId = null,
   createConversationFn = null,
   setCurrentConversationFn = null,
-  addConversationFn = null
+  addConversationFn = null,
+  thinkingProcessActions = null
 ) => {
   const { user } = useAuth(); // Add user from AuthContext
+
+  // 🎯 사고과정 관리 (thinkingProcessActions가 제공된 경우에만)
+  const { addStep, completeStep, startThinking, finishThinking } =
+    thinkingProcessActions || {};
 
   // 디버깅 로그 (첫 번째 렌더링에만)
   const isFirstRender = useRef(true);
   if (isFirstRender.current) {
-    console.log("🔍 [DEBUG] useChat 초기화:", {
-      projectId,
-      projectName,
-      promptCardsLength: promptCards?.length,
-      conversationId,
-      conversationIdType: typeof conversationId,
-      isConversationIdNull: conversationId === null,
-      isConversationIdUndefined: conversationId === undefined,
-      userId: user?.id,
-    });
+    console.log("🔍 useChat 초기화");
     isFirstRender.current = false;
   }
 
   // conversationId 변경 감지
   useEffect(() => {
-    console.log("🔍 [DEBUG] useChat - conversationId 변경:", {
-      newConversationId: conversationId,
-      conversationIdType: typeof conversationId,
-      isNull: conversationId === null,
-      isUndefined: conversationId === undefined,
-    });
+    console.log("🔄 conversationId 변경:", conversationId);
   }, [conversationId]);
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
@@ -68,13 +59,6 @@ export const useChat = (
   const scrollContainerRef = useRef(null);
   const lastScrollTopRef = useRef(0);
 
-  const {
-    isExecuting: isGenerating,
-    isStreaming,
-    executeOrchestration,
-    resetOrchestration,
-  } = useOrchestration(projectId);
-
   // WebSocket 훅 추가
   const {
     isConnected: wsConnected,
@@ -83,17 +67,13 @@ export const useChat = (
     startStreaming: wsStartStreaming,
     addMessageListener,
     removeMessageListener,
-  } = useWebSocket(projectId);
+  } = useWebSocket();
 
-  // 초기 메시지 설정 - projectId 또는 conversationId 변경시 초기화
+  // 초기 메시지 설정 - conversationId 변경시 초기화
   useEffect(() => {
-    console.log("🔍 [DEBUG] useChat 메시지 초기화:", {
-      projectId,
-      conversationId,
-      previousMessages: messages.length,
-    });
+    console.log("💬 메시지 초기화");
     setMessages([]); // 빈 배열로 시작
-  }, [projectId, conversationId]); // conversationId 추가
+  }, [conversationId]);
 
   // 사용자 스크롤 감지 함수
   const handleScroll = useCallback(() => {
@@ -460,10 +440,13 @@ export const useChat = (
     setCanSendMessage(true);
 
     // orchestration 상태 리셋
-    resetOrchestration();
+    // thinkingProcessActions가 제공되지 않으면 리셋하지 않음
+    if (thinkingProcessActions) {
+      thinkingProcessActions.resetOrchestration();
+    }
 
     toast.success("생성이 중단되었습니다");
-  }, [resetOrchestration]);
+  }, [thinkingProcessActions]);
 
   /**
    * 입력창 높이 자동 조절
@@ -515,19 +498,10 @@ export const useChat = (
    * 메시지 전송
    */
   const handleSendMessage = useCallback(async () => {
-    console.log("🚀 [DEBUG] useChat handleSendMessage 호출:", {
-      inputValue: inputValue.trim(),
-      isGenerating,
-      canSendMessage,
-      conversationId,
-      hasCreateConversationFn: !!createConversationFn,
-    });
+    console.log("🚀 메시지 전송 시작");
 
-    if (!inputValue.trim() || isGenerating) {
-      console.log("🚨 [DEBUG] 전송 중단: 조건 부족:", {
-        hasInput: !!inputValue.trim(),
-        isGenerating,
-      });
+    if (!inputValue.trim() || !canSendMessage) {
+      console.log("⚠️ 전송 조건 부족");
       return;
     }
 
@@ -653,16 +627,13 @@ export const useChat = (
       if (wsConnected) {
         console.log("WebSocket을 통한 실시간 스트리밍 시작");
         console.log("🔍 [DEBUG] 스트리밍 매개변수 상세 확인:", {
-          projectId,
+          userId: user?.id,
           userInput: userMessage.content,
           conversationId: conversationIdToUse,
           userSub: user?.id,
           historyLength: trimmedChatHistory.length,
-          promptCardsLength: activePromptCards.length,
-          conversationIdType: typeof conversationIdToUse,
-          conversationIdValue: conversationIdToUse,
-          isConversationIdNull: conversationIdToUse === null,
-          isConversationIdUndefined: conversationIdToUse === undefined,
+          promptCardsCount: promptCards?.length || 0,
+          selectedModel,
         });
 
         const success = wsStartStreaming(
@@ -818,7 +789,6 @@ export const useChat = (
     setCanSendMessage(true);
   }, [
     inputValue,
-    isGenerating,
     conversationId,
     createConversationFn,
     setCurrentConversationFn,
@@ -891,8 +861,11 @@ export const useChat = (
     streamingMessageIdRef.current = null;
     currentWebSocketRef.current = null;
     currentExecutionIdRef.current = null;
-    resetOrchestration();
-  }, [resetOrchestration]);
+    // thinkingProcessActions가 제공되지 않으면 리셋하지 않음
+    if (thinkingProcessActions) {
+      thinkingProcessActions.resetOrchestration();
+    }
+  }, [thinkingProcessActions]);
 
   // conversationId가 null로 변경될 때 자동으로 초기화
   useEffect(() => {
@@ -910,8 +883,8 @@ export const useChat = (
     setInputValue,
     handleInputChange, // 새로운 입력 핸들러
     copiedMessage,
-    isGenerating,
-    isStreaming,
+    // isGenerating, // 🗑️ 제거: canSendMessage로 대체
+    // isStreaming, // 🗑️ 제거: 필요한 곳에서 개별 관리
     canSendMessage,
     streamingMessageId: streamingMessageIdRef.current,
     messagesEndRef,
@@ -935,5 +908,6 @@ export const useChat = (
     // 모델 선택 관련 추가
     selectedModel,
     setSelectedModel,
+    generateConversationTitle,
   };
 };

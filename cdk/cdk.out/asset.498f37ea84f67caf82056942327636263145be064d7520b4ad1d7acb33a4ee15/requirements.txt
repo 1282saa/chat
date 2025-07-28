@@ -1,2 +1,0 @@
-# No special dependencies are needed anymore.
-# boto3 is included in the AWS Lambda runtime by default. 

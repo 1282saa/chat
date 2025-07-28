@@ -23,7 +23,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::887078546492:role/cdk-hnb659fds-deploy-role-887078546492-ap-northeast-2",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::887078546492:role/cdk-hnb659fds-cfn-exec-role-887078546492-ap-northeast-2",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-887078546492-ap-northeast-2/1d83cef597ec49ccc9b2f181f747d3d81d73c217f2aa343ef67a2666163d5e04.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-887078546492-ap-northeast-2/8ba2d15579d09da2db3551e877306cd0918680b531c5b53151ab96764a810d0e.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -179,20 +179,6 @@
             "data": "SubscriptionsTable40965A9D"
           }
         ],
-        "/ChatbotBackend/ProjectTable": [
-          {
-            "type": "aws:cdk:hasPhysicalName",
-            "data": {
-              "Ref": "ProjectTableE109554C"
-            }
-          }
-        ],
-        "/ChatbotBackend/ProjectTable/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ProjectTableE109554C"
-          }
-        ],
         "/ChatbotBackend/PromptMetaTable": [
           {
             "type": "aws:cdk:hasPhysicalName",
@@ -329,10 +315,10 @@
             "data": "LambdaRoleDefaultPolicy75625A82"
           }
         ],
-        "/ChatbotBackend/EnhancedAgentsLayer/Resource": [
+        "/ChatbotBackend/NewsProcessingLayer/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "EnhancedAgentsLayerDB688934"
+            "data": "NewsProcessingLayer63A6C836"
           }
         ],
         "/ChatbotBackend/GenerateFunction/Resource": [
@@ -341,22 +327,16 @@
             "data": "GenerateFunctionD11A7A28"
           }
         ],
-        "/ChatbotBackend/SavePromptFunction/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "SavePromptFunction071F515F"
-          }
-        ],
-        "/ChatbotBackend/ProjectFunction/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ProjectFunction5497A4ED"
-          }
-        ],
         "/ChatbotBackend/AuthFunction/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "AuthFunctionA1CD5E0F"
+          }
+        ],
+        "/ChatbotBackend/UserManagementFunction/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UserManagementFunction2338B082"
           }
         ],
         "/ChatbotBackend/JWTAuthorizerFunction/Resource": [
@@ -369,12 +349,6 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "JWTAuthorizerFunctionChatbotBackendChatbotApiAuthorizer7C77C4DBPermissionsE143B5BC"
-          }
-        ],
-        "/ChatbotBackend/UserManagementFunction/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "UserManagementFunction2338B082"
           }
         ],
         "/ChatbotBackend/ChatbotApi/Resource": [
@@ -398,7 +372,7 @@
         "/ChatbotBackend/ChatbotApi/Deployment/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiDeploymentB78958159f6b039c6f87e714d38401d0b7ddb68b"
+            "data": "ChatbotApiDeploymentB78958153fc91a2813333901880c75f9ea5ccb10"
           }
         ],
         "/ChatbotBackend/ChatbotApi/DeploymentStage.prod/Resource": [
@@ -791,340 +765,190 @@
             "data": "ChatbotApiusersubscriptionOPTIONS5A58A904"
           }
         ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsE05716B7"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/POST/ApiPermission.ChatbotBackendChatbotApi34F97BD6.POST..projects": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsPOSTApiPermissionChatbotBackendChatbotApi34F97BD6POSTprojects82760E07"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/POST/ApiPermission.Test.ChatbotBackendChatbotApi34F97BD6.POST..projects": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsPOSTApiPermissionTestChatbotBackendChatbotApi34F97BD6POSTprojectsF29B1BA5"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/POST/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsPOST7E5600BD"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/GET/ApiPermission.ChatbotBackendChatbotApi34F97BD6.GET..projects": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsGETApiPermissionChatbotBackendChatbotApi34F97BD6GETprojects22E8F4B4"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/GET/ApiPermission.Test.ChatbotBackendChatbotApi34F97BD6.GET..projects": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsGETApiPermissionTestChatbotBackendChatbotApi34F97BD6GETprojectsC6338B82"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/GET/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsGETCC0F17B1"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/OPTIONS/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsOPTIONS7EDE604C"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectId91B5119E"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/GET/ApiPermission.ChatbotBackendChatbotApi34F97BD6.GET..projects.{projectId}": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdGETApiPermissionChatbotBackendChatbotApi34F97BD6GETprojectsprojectId85EC6EED"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/GET/ApiPermission.Test.ChatbotBackendChatbotApi34F97BD6.GET..projects.{projectId}": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdGETApiPermissionTestChatbotBackendChatbotApi34F97BD6GETprojectsprojectIdB2CBA57D"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/GET/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdGET5CD2A307"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/PUT/ApiPermission.ChatbotBackendChatbotApi34F97BD6.PUT..projects.{projectId}": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdPUTApiPermissionChatbotBackendChatbotApi34F97BD6PUTprojectsprojectId5552F8D4"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/PUT/ApiPermission.Test.ChatbotBackendChatbotApi34F97BD6.PUT..projects.{projectId}": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdPUTApiPermissionTestChatbotBackendChatbotApi34F97BD6PUTprojectsprojectId2E79B82F"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/PUT/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdPUT698DA0B4"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/DELETE/ApiPermission.ChatbotBackendChatbotApi34F97BD6.DELETE..projects.{projectId}": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdDELETEApiPermissionChatbotBackendChatbotApi34F97BD6DELETEprojectsprojectId92DD32E6"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/DELETE/ApiPermission.Test.ChatbotBackendChatbotApi34F97BD6.DELETE..projects.{projectId}": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdDELETEApiPermissionTestChatbotBackendChatbotApi34F97BD6DELETEprojectsprojectId4FF0716A"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/DELETE/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdDELETE464DF1B4"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/OPTIONS/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdOPTIONS5D1BF97B"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/generate/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgenerate914AE84A"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/generate/POST/ApiPermission.ChatbotBackendChatbotApi34F97BD6.POST..projects.{projectId}.generate": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgeneratePOSTApiPermissionChatbotBackendChatbotApi34F97BD6POSTprojectsprojectIdgenerate0E5D7CE9"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/generate/POST/ApiPermission.Test.ChatbotBackendChatbotApi34F97BD6.POST..projects.{projectId}.generate": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgeneratePOSTApiPermissionTestChatbotBackendChatbotApi34F97BD6POSTprojectsprojectIdgenerateEAEE2D95"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/generate/POST/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgeneratePOST9E58EAAA"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/generate/OPTIONS/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgenerateOPTIONSBB04658B"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/generate/stream/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgeneratestream5F54A93B"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/generate/stream/POST/ApiPermission.ChatbotBackendChatbotApi34F97BD6.POST..projects.{projectId}.generate.stream": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgeneratestreamPOSTApiPermissionChatbotBackendChatbotApi34F97BD6POSTprojectsprojectIdgeneratestream61B1D256"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/generate/stream/POST/ApiPermission.Test.ChatbotBackendChatbotApi34F97BD6.POST..projects.{projectId}.generate.stream": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgeneratestreamPOSTApiPermissionTestChatbotBackendChatbotApi34F97BD6POSTprojectsprojectIdgeneratestream49AC9DB6"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/generate/stream/POST/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgeneratestreamPOST0224207B"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/generate/stream/OPTIONS/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgeneratestreamOPTIONSE0647C09"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/upload-url/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIduploadurl05BB08C9"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/upload-url/GET/ApiPermission.ChatbotBackendChatbotApi34F97BD6.GET..projects.{projectId}.upload-url": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIduploadurlGETApiPermissionChatbotBackendChatbotApi34F97BD6GETprojectsprojectIduploadurl950995AB"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/upload-url/GET/ApiPermission.Test.ChatbotBackendChatbotApi34F97BD6.GET..projects.{projectId}.upload-url": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIduploadurlGETApiPermissionTestChatbotBackendChatbotApi34F97BD6GETprojectsprojectIduploadurl219C40BA"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/upload-url/GET/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIduploadurlGETE6E699E8"
-          }
-        ],
-        "/ChatbotBackend/ChatbotApi/Default/projects/{projectId}/upload-url/OPTIONS/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIduploadurlOPTIONS0A1FAA28"
-          }
-        ],
         "/ChatbotBackend/ChatbotApi/Default/prompts/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "ChatbotApiprompts03168F80"
           }
         ],
-        "/ChatbotBackend/ChatbotApi/Default/prompts/{projectId}/Resource": [
+        "/ChatbotBackend/ChatbotApi/Default/prompts/POST/ApiPermission.ChatbotBackendChatbotApi34F97BD6.POST..prompts": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectId19E3E387"
+            "data": "ChatbotApipromptsPOSTApiPermissionChatbotBackendChatbotApi34F97BD6POSTprompts8B743314"
           }
         ],
-        "/ChatbotBackend/ChatbotApi/Default/prompts/{projectId}/POST/ApiPermission.ChatbotBackendChatbotApi34F97BD6.POST..prompts.{projectId}": [
+        "/ChatbotBackend/ChatbotApi/Default/prompts/POST/ApiPermission.Test.ChatbotBackendChatbotApi34F97BD6.POST..prompts": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdPOSTApiPermissionChatbotBackendChatbotApi34F97BD6POSTpromptsprojectId6F9EF636"
+            "data": "ChatbotApipromptsPOSTApiPermissionTestChatbotBackendChatbotApi34F97BD6POSTpromptsF2206BF9"
           }
         ],
-        "/ChatbotBackend/ChatbotApi/Default/prompts/{projectId}/POST/ApiPermission.Test.ChatbotBackendChatbotApi34F97BD6.POST..prompts.{projectId}": [
+        "/ChatbotBackend/ChatbotApi/Default/prompts/POST/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdPOSTApiPermissionTestChatbotBackendChatbotApi34F97BD6POSTpromptsprojectId39B63047"
+            "data": "ChatbotApipromptsPOST42566DEB"
           }
         ],
-        "/ChatbotBackend/ChatbotApi/Default/prompts/{projectId}/POST/Resource": [
+        "/ChatbotBackend/ChatbotApi/Default/prompts/GET/ApiPermission.ChatbotBackendChatbotApi34F97BD6.GET..prompts": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdPOSTB0BC6E69"
+            "data": "ChatbotApipromptsGETApiPermissionChatbotBackendChatbotApi34F97BD6GETpromptsCD7FFF0C"
           }
         ],
-        "/ChatbotBackend/ChatbotApi/Default/prompts/{projectId}/GET/ApiPermission.ChatbotBackendChatbotApi34F97BD6.GET..prompts.{projectId}": [
+        "/ChatbotBackend/ChatbotApi/Default/prompts/GET/ApiPermission.Test.ChatbotBackendChatbotApi34F97BD6.GET..prompts": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdGETApiPermissionChatbotBackendChatbotApi34F97BD6GETpromptsprojectIdA54D74F3"
+            "data": "ChatbotApipromptsGETApiPermissionTestChatbotBackendChatbotApi34F97BD6GETprompts6F9ADEFF"
           }
         ],
-        "/ChatbotBackend/ChatbotApi/Default/prompts/{projectId}/GET/ApiPermission.Test.ChatbotBackendChatbotApi34F97BD6.GET..prompts.{projectId}": [
+        "/ChatbotBackend/ChatbotApi/Default/prompts/GET/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdGETApiPermissionTestChatbotBackendChatbotApi34F97BD6GETpromptsprojectId23B0CFA3"
+            "data": "ChatbotApipromptsGET5D69D06D"
           }
         ],
-        "/ChatbotBackend/ChatbotApi/Default/prompts/{projectId}/GET/Resource": [
+        "/ChatbotBackend/ChatbotApi/Default/prompts/OPTIONS/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdGETA45C1BBF"
+            "data": "ChatbotApipromptsOPTIONSD31AFF06"
           }
         ],
-        "/ChatbotBackend/ChatbotApi/Default/prompts/{projectId}/OPTIONS/Resource": [
+        "/ChatbotBackend/ChatbotApi/Default/prompts/{promptId}/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdOPTIONSF06E1FF0"
+            "data": "ChatbotApipromptspromptId68497969"
           }
         ],
-        "/ChatbotBackend/ChatbotApi/Default/prompts/{projectId}/{promptId}/Resource": [
+        "/ChatbotBackend/ChatbotApi/Default/prompts/{promptId}/PUT/ApiPermission.ChatbotBackendChatbotApi34F97BD6.PUT..prompts.{promptId}": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdE36110FF"
+            "data": "ChatbotApipromptspromptIdPUTApiPermissionChatbotBackendChatbotApi34F97BD6PUTpromptspromptIdEE225CC9"
           }
         ],
-        "/ChatbotBackend/ChatbotApi/Default/prompts/{projectId}/{promptId}/PUT/ApiPermission.ChatbotBackendChatbotApi34F97BD6.PUT..prompts.{projectId}.{promptId}": [
+        "/ChatbotBackend/ChatbotApi/Default/prompts/{promptId}/PUT/ApiPermission.Test.ChatbotBackendChatbotApi34F97BD6.PUT..prompts.{promptId}": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdPUTApiPermissionChatbotBackendChatbotApi34F97BD6PUTpromptsprojectIdpromptId36628895"
+            "data": "ChatbotApipromptspromptIdPUTApiPermissionTestChatbotBackendChatbotApi34F97BD6PUTpromptspromptIdA81A4549"
           }
         ],
-        "/ChatbotBackend/ChatbotApi/Default/prompts/{projectId}/{promptId}/PUT/ApiPermission.Test.ChatbotBackendChatbotApi34F97BD6.PUT..prompts.{projectId}.{promptId}": [
+        "/ChatbotBackend/ChatbotApi/Default/prompts/{promptId}/PUT/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdPUTApiPermissionTestChatbotBackendChatbotApi34F97BD6PUTpromptsprojectIdpromptId5E49BD9A"
+            "data": "ChatbotApipromptspromptIdPUT78CF7F84"
           }
         ],
-        "/ChatbotBackend/ChatbotApi/Default/prompts/{projectId}/{promptId}/PUT/Resource": [
+        "/ChatbotBackend/ChatbotApi/Default/prompts/{promptId}/DELETE/ApiPermission.ChatbotBackendChatbotApi34F97BD6.DELETE..prompts.{promptId}": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdPUTE2B0EB9B"
+            "data": "ChatbotApipromptspromptIdDELETEApiPermissionChatbotBackendChatbotApi34F97BD6DELETEpromptspromptId6C27C5AB"
           }
         ],
-        "/ChatbotBackend/ChatbotApi/Default/prompts/{projectId}/{promptId}/DELETE/ApiPermission.ChatbotBackendChatbotApi34F97BD6.DELETE..prompts.{projectId}.{promptId}": [
+        "/ChatbotBackend/ChatbotApi/Default/prompts/{promptId}/DELETE/ApiPermission.Test.ChatbotBackendChatbotApi34F97BD6.DELETE..prompts.{promptId}": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdDELETEApiPermissionChatbotBackendChatbotApi34F97BD6DELETEpromptsprojectIdpromptIdC27C210F"
+            "data": "ChatbotApipromptspromptIdDELETEApiPermissionTestChatbotBackendChatbotApi34F97BD6DELETEpromptspromptId8A497B22"
           }
         ],
-        "/ChatbotBackend/ChatbotApi/Default/prompts/{projectId}/{promptId}/DELETE/ApiPermission.Test.ChatbotBackendChatbotApi34F97BD6.DELETE..prompts.{projectId}.{promptId}": [
+        "/ChatbotBackend/ChatbotApi/Default/prompts/{promptId}/DELETE/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdDELETEApiPermissionTestChatbotBackendChatbotApi34F97BD6DELETEpromptsprojectIdpromptIdADBDED42"
+            "data": "ChatbotApipromptspromptIdDELETE6E11EF0B"
           }
         ],
-        "/ChatbotBackend/ChatbotApi/Default/prompts/{projectId}/{promptId}/DELETE/Resource": [
+        "/ChatbotBackend/ChatbotApi/Default/prompts/{promptId}/OPTIONS/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdDELETE3E80054F"
+            "data": "ChatbotApipromptspromptIdOPTIONS9B08327A"
           }
         ],
-        "/ChatbotBackend/ChatbotApi/Default/prompts/{projectId}/{promptId}/OPTIONS/Resource": [
+        "/ChatbotBackend/ChatbotApi/Default/prompts/{promptId}/content/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdOPTIONSC3B47CB2"
+            "data": "ChatbotApipromptspromptIdcontent206EE1A8"
           }
         ],
-        "/ChatbotBackend/ChatbotApi/Default/prompts/{projectId}/{promptId}/content/Resource": [
+        "/ChatbotBackend/ChatbotApi/Default/prompts/{promptId}/content/GET/ApiPermission.ChatbotBackendChatbotApi34F97BD6.GET..prompts.{promptId}.content": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdcontentB26C6C6D"
+            "data": "ChatbotApipromptspromptIdcontentGETApiPermissionChatbotBackendChatbotApi34F97BD6GETpromptspromptIdcontent8A3E0C00"
           }
         ],
-        "/ChatbotBackend/ChatbotApi/Default/prompts/{projectId}/{promptId}/content/GET/ApiPermission.ChatbotBackendChatbotApi34F97BD6.GET..prompts.{projectId}.{promptId}.content": [
+        "/ChatbotBackend/ChatbotApi/Default/prompts/{promptId}/content/GET/ApiPermission.Test.ChatbotBackendChatbotApi34F97BD6.GET..prompts.{promptId}.content": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdcontentGETApiPermissionChatbotBackendChatbotApi34F97BD6GETpromptsprojectIdpromptIdcontent59D5C154"
+            "data": "ChatbotApipromptspromptIdcontentGETApiPermissionTestChatbotBackendChatbotApi34F97BD6GETpromptspromptIdcontent43090AA3"
           }
         ],
-        "/ChatbotBackend/ChatbotApi/Default/prompts/{projectId}/{promptId}/content/GET/ApiPermission.Test.ChatbotBackendChatbotApi34F97BD6.GET..prompts.{projectId}.{promptId}.content": [
+        "/ChatbotBackend/ChatbotApi/Default/prompts/{promptId}/content/GET/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdcontentGETApiPermissionTestChatbotBackendChatbotApi34F97BD6GETpromptsprojectIdpromptIdcontentEA563D59"
+            "data": "ChatbotApipromptspromptIdcontentGET99478210"
           }
         ],
-        "/ChatbotBackend/ChatbotApi/Default/prompts/{projectId}/{promptId}/content/GET/Resource": [
+        "/ChatbotBackend/ChatbotApi/Default/prompts/{promptId}/content/OPTIONS/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdcontentGET1E94210C"
+            "data": "ChatbotApipromptspromptIdcontentOPTIONS8E77BB19"
           }
         ],
-        "/ChatbotBackend/ChatbotApi/Default/prompts/{projectId}/{promptId}/content/OPTIONS/Resource": [
+        "/ChatbotBackend/ChatbotApi/Default/generate/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdcontentOPTIONSAF2F611C"
+            "data": "ChatbotApigenerate2D00A9C0"
+          }
+        ],
+        "/ChatbotBackend/ChatbotApi/Default/generate/POST/ApiPermission.ChatbotBackendChatbotApi34F97BD6.POST..generate": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigeneratePOSTApiPermissionChatbotBackendChatbotApi34F97BD6POSTgenerate4DF884D3"
+          }
+        ],
+        "/ChatbotBackend/ChatbotApi/Default/generate/POST/ApiPermission.Test.ChatbotBackendChatbotApi34F97BD6.POST..generate": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigeneratePOSTApiPermissionTestChatbotBackendChatbotApi34F97BD6POSTgenerate63BF5191"
+          }
+        ],
+        "/ChatbotBackend/ChatbotApi/Default/generate/POST/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigeneratePOST3955818A"
+          }
+        ],
+        "/ChatbotBackend/ChatbotApi/Default/generate/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigenerateOPTIONS3A49FC1A"
+          }
+        ],
+        "/ChatbotBackend/ChatbotApi/Default/generate/stream/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigeneratestream540C4A3C"
+          }
+        ],
+        "/ChatbotBackend/ChatbotApi/Default/generate/stream/POST/ApiPermission.ChatbotBackendChatbotApi34F97BD6.POST..generate.stream": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigeneratestreamPOSTApiPermissionChatbotBackendChatbotApi34F97BD6POSTgeneratestream6780C10E"
+          }
+        ],
+        "/ChatbotBackend/ChatbotApi/Default/generate/stream/POST/ApiPermission.Test.ChatbotBackendChatbotApi34F97BD6.POST..generate.stream": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigeneratestreamPOSTApiPermissionTestChatbotBackendChatbotApi34F97BD6POSTgeneratestream7399A8A8"
+          }
+        ],
+        "/ChatbotBackend/ChatbotApi/Default/generate/stream/POST/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigeneratestreamPOSTB9582EC7"
+          }
+        ],
+        "/ChatbotBackend/ChatbotApi/Default/generate/stream/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigeneratestreamOPTIONS87864C2D"
           }
         ],
         "/ChatbotBackend/ChatbotApi/Default/conversations/Resource": [
@@ -1315,12 +1139,6 @@
             "data": "WebSocketDisconnectFunction189772FC"
           }
         ],
-        "/ChatbotBackend/WebSocketStreamFunction/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "WebSocketStreamFunctionB192D3D1"
-          }
-        ],
         "/ChatbotBackend/ChatbotWebSocketApi/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -1381,6 +1199,12 @@
             "data": "ChatbotWebSocketApistreamRoute8824CB30"
           }
         ],
+        "/ChatbotBackend/WebSocketStreamFunction/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "WebSocketStreamFunctionB192D3D1"
+          }
+        ],
         "/ChatbotBackend/WebSocketStage/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -1397,18 +1221,6 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "GenerateErrorAlarmE8D59242"
-          }
-        ],
-        "/ChatbotBackend/ProjectErrorAlarm/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ProjectErrorAlarmEFDF66E6"
-          }
-        ],
-        "/ChatbotBackend/SavePromptErrorAlarm/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "SavePromptErrorAlarm3BFF9698"
           }
         ],
         "/ChatbotBackend/AuthErrorAlarm/Resource": [
@@ -1502,7 +1314,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::887078546492:role/cdk-hnb659fds-deploy-role-887078546492-ap-northeast-2",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::887078546492:role/cdk-hnb659fds-cfn-exec-role-887078546492-ap-northeast-2",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-887078546492-ap-northeast-2/d21d9310de1ebc5b3e334cd0cb02d423e0f48d684e336335ec7b6f9c8f6e8e8f.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-887078546492-ap-northeast-2/8ff29138426adaf37f603e89b06d2fd5f6c0dfc77ff2d0049c2348dfe127546a.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -1656,7 +1468,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::887078546492:role/cdk-hnb659fds-deploy-role-887078546492-ap-northeast-2",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::887078546492:role/cdk-hnb659fds-cfn-exec-role-887078546492-ap-northeast-2",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-887078546492-ap-northeast-2/9ae0815f99fef8fcd5a61ed46486620cfe5877c38df6390a2853264ec2490052.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-887078546492-ap-northeast-2/293e6fe1ce71993d9edb8010d164c90d212e1ae686a888cc7c370f136171b57a.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -1848,7 +1660,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::887078546492:role/cdk-hnb659fds-deploy-role-887078546492-ap-northeast-2",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::887078546492:role/cdk-hnb659fds-cfn-exec-role-887078546492-ap-northeast-2",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-887078546492-ap-northeast-2/d5ecc1349f555af4fa74c7ef583d4122dabb54dde4525e117bc311ec84333189.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-887078546492-ap-northeast-2/196dd27d2607a31f32013fa034ee64d48030229634266ade04628d262723981f.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -2004,20 +1816,6 @@
             "data": "SubscriptionsTable40965A9D"
           }
         ],
-        "/ChatbotBackendProd/ProjectTable": [
-          {
-            "type": "aws:cdk:hasPhysicalName",
-            "data": {
-              "Ref": "ProjectTableE109554C"
-            }
-          }
-        ],
-        "/ChatbotBackendProd/ProjectTable/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ProjectTableE109554C"
-          }
-        ],
         "/ChatbotBackendProd/PromptMetaTable": [
           {
             "type": "aws:cdk:hasPhysicalName",
@@ -2154,10 +1952,10 @@
             "data": "LambdaRoleDefaultPolicy75625A82"
           }
         ],
-        "/ChatbotBackendProd/EnhancedAgentsLayer/Resource": [
+        "/ChatbotBackendProd/NewsProcessingLayer/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "EnhancedAgentsLayerDB688934"
+            "data": "NewsProcessingLayer63A6C836"
           }
         ],
         "/ChatbotBackendProd/GenerateFunction/Resource": [
@@ -2166,22 +1964,16 @@
             "data": "GenerateFunctionD11A7A28"
           }
         ],
-        "/ChatbotBackendProd/SavePromptFunction/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "SavePromptFunction071F515F"
-          }
-        ],
-        "/ChatbotBackendProd/ProjectFunction/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ProjectFunction5497A4ED"
-          }
-        ],
         "/ChatbotBackendProd/AuthFunction/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "AuthFunctionA1CD5E0F"
+          }
+        ],
+        "/ChatbotBackendProd/UserManagementFunction/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UserManagementFunction2338B082"
           }
         ],
         "/ChatbotBackendProd/JWTAuthorizerFunction/Resource": [
@@ -2194,12 +1986,6 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "JWTAuthorizerFunctionChatbotBackendProdChatbotApiAuthorizer5FD2DAA0PermissionsAF8ED1A9"
-          }
-        ],
-        "/ChatbotBackendProd/UserManagementFunction/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "UserManagementFunction2338B082"
           }
         ],
         "/ChatbotBackendProd/ChatbotApi/Resource": [
@@ -2223,7 +2009,7 @@
         "/ChatbotBackendProd/ChatbotApi/Deployment/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiDeploymentB7895815ee31b2827e30cea844307632b9c85454"
+            "data": "ChatbotApiDeploymentB789581584a6a91e5aa582526cc952a1b903d56d"
           }
         ],
         "/ChatbotBackendProd/ChatbotApi/DeploymentStage.prod/Resource": [
@@ -2616,340 +2402,190 @@
             "data": "ChatbotApiusersubscriptionOPTIONS5A58A904"
           }
         ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsE05716B7"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/POST/ApiPermission.ChatbotBackendProdChatbotApiCB97AD5C.POST..projects": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsPOSTApiPermissionChatbotBackendProdChatbotApiCB97AD5CPOSTprojects917C8A07"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/POST/ApiPermission.Test.ChatbotBackendProdChatbotApiCB97AD5C.POST..projects": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsPOSTApiPermissionTestChatbotBackendProdChatbotApiCB97AD5CPOSTprojects456CECF7"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/POST/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsPOST7E5600BD"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/GET/ApiPermission.ChatbotBackendProdChatbotApiCB97AD5C.GET..projects": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsGETApiPermissionChatbotBackendProdChatbotApiCB97AD5CGETprojectsF76B767C"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/GET/ApiPermission.Test.ChatbotBackendProdChatbotApiCB97AD5C.GET..projects": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsGETApiPermissionTestChatbotBackendProdChatbotApiCB97AD5CGETprojectsFA635918"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/GET/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsGETCC0F17B1"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/OPTIONS/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsOPTIONS7EDE604C"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectId91B5119E"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/GET/ApiPermission.ChatbotBackendProdChatbotApiCB97AD5C.GET..projects.{projectId}": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdGETApiPermissionChatbotBackendProdChatbotApiCB97AD5CGETprojectsprojectId415AE18F"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/GET/ApiPermission.Test.ChatbotBackendProdChatbotApiCB97AD5C.GET..projects.{projectId}": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdGETApiPermissionTestChatbotBackendProdChatbotApiCB97AD5CGETprojectsprojectId9F10F217"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/GET/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdGET5CD2A307"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/PUT/ApiPermission.ChatbotBackendProdChatbotApiCB97AD5C.PUT..projects.{projectId}": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdPUTApiPermissionChatbotBackendProdChatbotApiCB97AD5CPUTprojectsprojectIdFDC2B3C4"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/PUT/ApiPermission.Test.ChatbotBackendProdChatbotApiCB97AD5C.PUT..projects.{projectId}": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdPUTApiPermissionTestChatbotBackendProdChatbotApiCB97AD5CPUTprojectsprojectId45639565"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/PUT/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdPUT698DA0B4"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/DELETE/ApiPermission.ChatbotBackendProdChatbotApiCB97AD5C.DELETE..projects.{projectId}": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdDELETEApiPermissionChatbotBackendProdChatbotApiCB97AD5CDELETEprojectsprojectId99DAA80D"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/DELETE/ApiPermission.Test.ChatbotBackendProdChatbotApiCB97AD5C.DELETE..projects.{projectId}": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdDELETEApiPermissionTestChatbotBackendProdChatbotApiCB97AD5CDELETEprojectsprojectIdA24FE313"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/DELETE/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdDELETE464DF1B4"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/OPTIONS/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdOPTIONS5D1BF97B"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/generate/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgenerate914AE84A"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/generate/POST/ApiPermission.ChatbotBackendProdChatbotApiCB97AD5C.POST..projects.{projectId}.generate": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgeneratePOSTApiPermissionChatbotBackendProdChatbotApiCB97AD5CPOSTprojectsprojectIdgenerateBF0250A6"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/generate/POST/ApiPermission.Test.ChatbotBackendProdChatbotApiCB97AD5C.POST..projects.{projectId}.generate": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgeneratePOSTApiPermissionTestChatbotBackendProdChatbotApiCB97AD5CPOSTprojectsprojectIdgenerateC8DB8F0B"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/generate/POST/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgeneratePOST9E58EAAA"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/generate/OPTIONS/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgenerateOPTIONSBB04658B"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/generate/stream/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgeneratestream5F54A93B"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/generate/stream/POST/ApiPermission.ChatbotBackendProdChatbotApiCB97AD5C.POST..projects.{projectId}.generate.stream": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgeneratestreamPOSTApiPermissionChatbotBackendProdChatbotApiCB97AD5CPOSTprojectsprojectIdgeneratestreamE06F8632"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/generate/stream/POST/ApiPermission.Test.ChatbotBackendProdChatbotApiCB97AD5C.POST..projects.{projectId}.generate.stream": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgeneratestreamPOSTApiPermissionTestChatbotBackendProdChatbotApiCB97AD5CPOSTprojectsprojectIdgeneratestream3F6920E5"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/generate/stream/POST/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgeneratestreamPOST0224207B"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/generate/stream/OPTIONS/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgeneratestreamOPTIONSE0647C09"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/upload-url/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIduploadurl05BB08C9"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/upload-url/GET/ApiPermission.ChatbotBackendProdChatbotApiCB97AD5C.GET..projects.{projectId}.upload-url": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIduploadurlGETApiPermissionChatbotBackendProdChatbotApiCB97AD5CGETprojectsprojectIduploadurl9D449F14"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/upload-url/GET/ApiPermission.Test.ChatbotBackendProdChatbotApiCB97AD5C.GET..projects.{projectId}.upload-url": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIduploadurlGETApiPermissionTestChatbotBackendProdChatbotApiCB97AD5CGETprojectsprojectIduploadurlFC5B0CEA"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/upload-url/GET/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIduploadurlGETE6E699E8"
-          }
-        ],
-        "/ChatbotBackendProd/ChatbotApi/Default/projects/{projectId}/upload-url/OPTIONS/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIduploadurlOPTIONS0A1FAA28"
-          }
-        ],
         "/ChatbotBackendProd/ChatbotApi/Default/prompts/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "ChatbotApiprompts03168F80"
           }
         ],
-        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{projectId}/Resource": [
+        "/ChatbotBackendProd/ChatbotApi/Default/prompts/POST/ApiPermission.ChatbotBackendProdChatbotApiCB97AD5C.POST..prompts": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectId19E3E387"
+            "data": "ChatbotApipromptsPOSTApiPermissionChatbotBackendProdChatbotApiCB97AD5CPOSTprompts8C2364E5"
           }
         ],
-        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{projectId}/POST/ApiPermission.ChatbotBackendProdChatbotApiCB97AD5C.POST..prompts.{projectId}": [
+        "/ChatbotBackendProd/ChatbotApi/Default/prompts/POST/ApiPermission.Test.ChatbotBackendProdChatbotApiCB97AD5C.POST..prompts": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdPOSTApiPermissionChatbotBackendProdChatbotApiCB97AD5CPOSTpromptsprojectId651F0600"
+            "data": "ChatbotApipromptsPOSTApiPermissionTestChatbotBackendProdChatbotApiCB97AD5CPOSTpromptsFE51C233"
           }
         ],
-        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{projectId}/POST/ApiPermission.Test.ChatbotBackendProdChatbotApiCB97AD5C.POST..prompts.{projectId}": [
+        "/ChatbotBackendProd/ChatbotApi/Default/prompts/POST/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdPOSTApiPermissionTestChatbotBackendProdChatbotApiCB97AD5CPOSTpromptsprojectId34D7AC86"
+            "data": "ChatbotApipromptsPOST42566DEB"
           }
         ],
-        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{projectId}/POST/Resource": [
+        "/ChatbotBackendProd/ChatbotApi/Default/prompts/GET/ApiPermission.ChatbotBackendProdChatbotApiCB97AD5C.GET..prompts": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdPOSTB0BC6E69"
+            "data": "ChatbotApipromptsGETApiPermissionChatbotBackendProdChatbotApiCB97AD5CGETpromptsCDDA25DD"
           }
         ],
-        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{projectId}/GET/ApiPermission.ChatbotBackendProdChatbotApiCB97AD5C.GET..prompts.{projectId}": [
+        "/ChatbotBackendProd/ChatbotApi/Default/prompts/GET/ApiPermission.Test.ChatbotBackendProdChatbotApiCB97AD5C.GET..prompts": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdGETApiPermissionChatbotBackendProdChatbotApiCB97AD5CGETpromptsprojectIdEE594447"
+            "data": "ChatbotApipromptsGETApiPermissionTestChatbotBackendProdChatbotApiCB97AD5CGETpromptsEF5425FC"
           }
         ],
-        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{projectId}/GET/ApiPermission.Test.ChatbotBackendProdChatbotApiCB97AD5C.GET..prompts.{projectId}": [
+        "/ChatbotBackendProd/ChatbotApi/Default/prompts/GET/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdGETApiPermissionTestChatbotBackendProdChatbotApiCB97AD5CGETpromptsprojectIdA1D12D9D"
+            "data": "ChatbotApipromptsGET5D69D06D"
           }
         ],
-        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{projectId}/GET/Resource": [
+        "/ChatbotBackendProd/ChatbotApi/Default/prompts/OPTIONS/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdGETA45C1BBF"
+            "data": "ChatbotApipromptsOPTIONSD31AFF06"
           }
         ],
-        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{projectId}/OPTIONS/Resource": [
+        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{promptId}/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdOPTIONSF06E1FF0"
+            "data": "ChatbotApipromptspromptId68497969"
           }
         ],
-        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{projectId}/{promptId}/Resource": [
+        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{promptId}/PUT/ApiPermission.ChatbotBackendProdChatbotApiCB97AD5C.PUT..prompts.{promptId}": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdE36110FF"
+            "data": "ChatbotApipromptspromptIdPUTApiPermissionChatbotBackendProdChatbotApiCB97AD5CPUTpromptspromptId591AC834"
           }
         ],
-        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{projectId}/{promptId}/PUT/ApiPermission.ChatbotBackendProdChatbotApiCB97AD5C.PUT..prompts.{projectId}.{promptId}": [
+        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{promptId}/PUT/ApiPermission.Test.ChatbotBackendProdChatbotApiCB97AD5C.PUT..prompts.{promptId}": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdPUTApiPermissionChatbotBackendProdChatbotApiCB97AD5CPUTpromptsprojectIdpromptIdCA4504BD"
+            "data": "ChatbotApipromptspromptIdPUTApiPermissionTestChatbotBackendProdChatbotApiCB97AD5CPUTpromptspromptIdF67192A2"
           }
         ],
-        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{projectId}/{promptId}/PUT/ApiPermission.Test.ChatbotBackendProdChatbotApiCB97AD5C.PUT..prompts.{projectId}.{promptId}": [
+        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{promptId}/PUT/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdPUTApiPermissionTestChatbotBackendProdChatbotApiCB97AD5CPUTpromptsprojectIdpromptIdB3C88F94"
+            "data": "ChatbotApipromptspromptIdPUT78CF7F84"
           }
         ],
-        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{projectId}/{promptId}/PUT/Resource": [
+        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{promptId}/DELETE/ApiPermission.ChatbotBackendProdChatbotApiCB97AD5C.DELETE..prompts.{promptId}": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdPUTE2B0EB9B"
+            "data": "ChatbotApipromptspromptIdDELETEApiPermissionChatbotBackendProdChatbotApiCB97AD5CDELETEpromptspromptIdC971DBC1"
           }
         ],
-        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{projectId}/{promptId}/DELETE/ApiPermission.ChatbotBackendProdChatbotApiCB97AD5C.DELETE..prompts.{projectId}.{promptId}": [
+        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{promptId}/DELETE/ApiPermission.Test.ChatbotBackendProdChatbotApiCB97AD5C.DELETE..prompts.{promptId}": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdDELETEApiPermissionChatbotBackendProdChatbotApiCB97AD5CDELETEpromptsprojectIdpromptId404F5E47"
+            "data": "ChatbotApipromptspromptIdDELETEApiPermissionTestChatbotBackendProdChatbotApiCB97AD5CDELETEpromptspromptIdAA83B20F"
           }
         ],
-        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{projectId}/{promptId}/DELETE/ApiPermission.Test.ChatbotBackendProdChatbotApiCB97AD5C.DELETE..prompts.{projectId}.{promptId}": [
+        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{promptId}/DELETE/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdDELETEApiPermissionTestChatbotBackendProdChatbotApiCB97AD5CDELETEpromptsprojectIdpromptId3391751D"
+            "data": "ChatbotApipromptspromptIdDELETE6E11EF0B"
           }
         ],
-        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{projectId}/{promptId}/DELETE/Resource": [
+        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{promptId}/OPTIONS/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdDELETE3E80054F"
+            "data": "ChatbotApipromptspromptIdOPTIONS9B08327A"
           }
         ],
-        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{projectId}/{promptId}/OPTIONS/Resource": [
+        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{promptId}/content/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdOPTIONSC3B47CB2"
+            "data": "ChatbotApipromptspromptIdcontent206EE1A8"
           }
         ],
-        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{projectId}/{promptId}/content/Resource": [
+        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{promptId}/content/GET/ApiPermission.ChatbotBackendProdChatbotApiCB97AD5C.GET..prompts.{promptId}.content": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdcontentB26C6C6D"
+            "data": "ChatbotApipromptspromptIdcontentGETApiPermissionChatbotBackendProdChatbotApiCB97AD5CGETpromptspromptIdcontentD6AB65B7"
           }
         ],
-        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{projectId}/{promptId}/content/GET/ApiPermission.ChatbotBackendProdChatbotApiCB97AD5C.GET..prompts.{projectId}.{promptId}.content": [
+        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{promptId}/content/GET/ApiPermission.Test.ChatbotBackendProdChatbotApiCB97AD5C.GET..prompts.{promptId}.content": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdcontentGETApiPermissionChatbotBackendProdChatbotApiCB97AD5CGETpromptsprojectIdpromptIdcontent920AC2BB"
+            "data": "ChatbotApipromptspromptIdcontentGETApiPermissionTestChatbotBackendProdChatbotApiCB97AD5CGETpromptspromptIdcontentBD7AB0C7"
           }
         ],
-        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{projectId}/{promptId}/content/GET/ApiPermission.Test.ChatbotBackendProdChatbotApiCB97AD5C.GET..prompts.{projectId}.{promptId}.content": [
+        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{promptId}/content/GET/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdcontentGETApiPermissionTestChatbotBackendProdChatbotApiCB97AD5CGETpromptsprojectIdpromptIdcontent90E1A4B2"
+            "data": "ChatbotApipromptspromptIdcontentGET99478210"
           }
         ],
-        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{projectId}/{promptId}/content/GET/Resource": [
+        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{promptId}/content/OPTIONS/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdcontentGET1E94210C"
+            "data": "ChatbotApipromptspromptIdcontentOPTIONS8E77BB19"
           }
         ],
-        "/ChatbotBackendProd/ChatbotApi/Default/prompts/{projectId}/{promptId}/content/OPTIONS/Resource": [
+        "/ChatbotBackendProd/ChatbotApi/Default/generate/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdcontentOPTIONSAF2F611C"
+            "data": "ChatbotApigenerate2D00A9C0"
+          }
+        ],
+        "/ChatbotBackendProd/ChatbotApi/Default/generate/POST/ApiPermission.ChatbotBackendProdChatbotApiCB97AD5C.POST..generate": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigeneratePOSTApiPermissionChatbotBackendProdChatbotApiCB97AD5CPOSTgenerateAE0F5047"
+          }
+        ],
+        "/ChatbotBackendProd/ChatbotApi/Default/generate/POST/ApiPermission.Test.ChatbotBackendProdChatbotApiCB97AD5C.POST..generate": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigeneratePOSTApiPermissionTestChatbotBackendProdChatbotApiCB97AD5CPOSTgenerateF0418012"
+          }
+        ],
+        "/ChatbotBackendProd/ChatbotApi/Default/generate/POST/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigeneratePOST3955818A"
+          }
+        ],
+        "/ChatbotBackendProd/ChatbotApi/Default/generate/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigenerateOPTIONS3A49FC1A"
+          }
+        ],
+        "/ChatbotBackendProd/ChatbotApi/Default/generate/stream/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigeneratestream540C4A3C"
+          }
+        ],
+        "/ChatbotBackendProd/ChatbotApi/Default/generate/stream/POST/ApiPermission.ChatbotBackendProdChatbotApiCB97AD5C.POST..generate.stream": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigeneratestreamPOSTApiPermissionChatbotBackendProdChatbotApiCB97AD5CPOSTgeneratestream93A49DAE"
+          }
+        ],
+        "/ChatbotBackendProd/ChatbotApi/Default/generate/stream/POST/ApiPermission.Test.ChatbotBackendProdChatbotApiCB97AD5C.POST..generate.stream": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigeneratestreamPOSTApiPermissionTestChatbotBackendProdChatbotApiCB97AD5CPOSTgeneratestreamA5E72A46"
+          }
+        ],
+        "/ChatbotBackendProd/ChatbotApi/Default/generate/stream/POST/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigeneratestreamPOSTB9582EC7"
+          }
+        ],
+        "/ChatbotBackendProd/ChatbotApi/Default/generate/stream/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigeneratestreamOPTIONS87864C2D"
           }
         ],
         "/ChatbotBackendProd/ChatbotApi/Default/conversations/Resource": [
@@ -3140,12 +2776,6 @@
             "data": "WebSocketDisconnectFunction189772FC"
           }
         ],
-        "/ChatbotBackendProd/WebSocketStreamFunction/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "WebSocketStreamFunctionB192D3D1"
-          }
-        ],
         "/ChatbotBackendProd/ChatbotWebSocketApi/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -3206,6 +2836,12 @@
             "data": "ChatbotWebSocketApistreamRoute8824CB30"
           }
         ],
+        "/ChatbotBackendProd/WebSocketStreamFunction/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "WebSocketStreamFunctionB192D3D1"
+          }
+        ],
         "/ChatbotBackendProd/WebSocketStage/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -3222,18 +2858,6 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "GenerateErrorAlarmE8D59242"
-          }
-        ],
-        "/ChatbotBackendProd/ProjectErrorAlarm/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ProjectErrorAlarmEFDF66E6"
-          }
-        ],
-        "/ChatbotBackendProd/SavePromptErrorAlarm/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "SavePromptErrorAlarm3BFF9698"
           }
         ],
         "/ChatbotBackendProd/AuthErrorAlarm/Resource": [
@@ -3327,7 +2951,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::887078546492:role/cdk-hnb659fds-deploy-role-887078546492-ap-northeast-2",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::887078546492:role/cdk-hnb659fds-cfn-exec-role-887078546492-ap-northeast-2",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-887078546492-ap-northeast-2/bb3ac174407695ee264037f8201dd976e3ecd95b5aec55c1ad62cd040224dc63.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-887078546492-ap-northeast-2/5710688efc9d3eb22aa1acdc14c9e7877e3e168be030d8c0d3b4650a6e1dcd75.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -3481,7 +3105,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::887078546492:role/cdk-hnb659fds-deploy-role-887078546492-ap-northeast-2",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::887078546492:role/cdk-hnb659fds-cfn-exec-role-887078546492-ap-northeast-2",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-887078546492-ap-northeast-2/4095a5ddfc47a56aaf097c8c4b59205f74c7134052b56916b14c16892dd27980.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-887078546492-ap-northeast-2/b97dd00e6b95af713f54ceece8cd87a31996479f3eb8bac199d21039f2387708.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -3649,7 +3273,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::887078546492:role/cdk-hnb659fds-deploy-role-887078546492-ap-northeast-2",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::887078546492:role/cdk-hnb659fds-cfn-exec-role-887078546492-ap-northeast-2",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-887078546492-ap-northeast-2/1bc573e593b2103969ca8a827934a1002d84f9d75d6ca105f9ac0b112093cd6b.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-887078546492-ap-northeast-2/c0dcae9ca85781c155398f506e0e83fa350289b9852f7ef51b56cbe489bcc90a.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -3805,20 +3429,6 @@
             "data": "SubscriptionsTable40965A9D"
           }
         ],
-        "/ChatbotBackendDev/ProjectTable": [
-          {
-            "type": "aws:cdk:hasPhysicalName",
-            "data": {
-              "Ref": "ProjectTableE109554C"
-            }
-          }
-        ],
-        "/ChatbotBackendDev/ProjectTable/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ProjectTableE109554C"
-          }
-        ],
         "/ChatbotBackendDev/PromptMetaTable": [
           {
             "type": "aws:cdk:hasPhysicalName",
@@ -3955,10 +3565,10 @@
             "data": "LambdaRoleDefaultPolicy75625A82"
           }
         ],
-        "/ChatbotBackendDev/EnhancedAgentsLayer/Resource": [
+        "/ChatbotBackendDev/NewsProcessingLayer/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "EnhancedAgentsLayerDB688934"
+            "data": "NewsProcessingLayer63A6C836"
           }
         ],
         "/ChatbotBackendDev/GenerateFunction/Resource": [
@@ -3967,22 +3577,16 @@
             "data": "GenerateFunctionD11A7A28"
           }
         ],
-        "/ChatbotBackendDev/SavePromptFunction/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "SavePromptFunction071F515F"
-          }
-        ],
-        "/ChatbotBackendDev/ProjectFunction/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ProjectFunction5497A4ED"
-          }
-        ],
         "/ChatbotBackendDev/AuthFunction/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "AuthFunctionA1CD5E0F"
+          }
+        ],
+        "/ChatbotBackendDev/UserManagementFunction/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UserManagementFunction2338B082"
           }
         ],
         "/ChatbotBackendDev/JWTAuthorizerFunction/Resource": [
@@ -3995,12 +3599,6 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "JWTAuthorizerFunctionChatbotBackendDevChatbotApiAuthorizerF4AF2F31Permissions8AD2EEDB"
-          }
-        ],
-        "/ChatbotBackendDev/UserManagementFunction/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "UserManagementFunction2338B082"
           }
         ],
         "/ChatbotBackendDev/ChatbotApi/Resource": [
@@ -4024,7 +3622,7 @@
         "/ChatbotBackendDev/ChatbotApi/Deployment/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiDeploymentB7895815f362755103d0d87e3eb0237959f74ea3"
+            "data": "ChatbotApiDeploymentB7895815515e9446ef98342aa913322456fdc1a0"
           }
         ],
         "/ChatbotBackendDev/ChatbotApi/DeploymentStage.prod/Resource": [
@@ -4417,340 +4015,190 @@
             "data": "ChatbotApiusersubscriptionOPTIONS5A58A904"
           }
         ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsE05716B7"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/POST/ApiPermission.ChatbotBackendDevChatbotApi322FF874.POST..projects": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsPOSTApiPermissionChatbotBackendDevChatbotApi322FF874POSTprojectsF9A68239"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/POST/ApiPermission.Test.ChatbotBackendDevChatbotApi322FF874.POST..projects": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsPOSTApiPermissionTestChatbotBackendDevChatbotApi322FF874POSTprojectsB9EFAAAF"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/POST/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsPOST7E5600BD"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/GET/ApiPermission.ChatbotBackendDevChatbotApi322FF874.GET..projects": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsGETApiPermissionChatbotBackendDevChatbotApi322FF874GETprojectsFCA712B2"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/GET/ApiPermission.Test.ChatbotBackendDevChatbotApi322FF874.GET..projects": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsGETApiPermissionTestChatbotBackendDevChatbotApi322FF874GETprojects36446218"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/GET/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsGETCC0F17B1"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/OPTIONS/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsOPTIONS7EDE604C"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectId91B5119E"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/GET/ApiPermission.ChatbotBackendDevChatbotApi322FF874.GET..projects.{projectId}": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdGETApiPermissionChatbotBackendDevChatbotApi322FF874GETprojectsprojectIdFA465105"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/GET/ApiPermission.Test.ChatbotBackendDevChatbotApi322FF874.GET..projects.{projectId}": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdGETApiPermissionTestChatbotBackendDevChatbotApi322FF874GETprojectsprojectId44D8C523"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/GET/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdGET5CD2A307"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/PUT/ApiPermission.ChatbotBackendDevChatbotApi322FF874.PUT..projects.{projectId}": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdPUTApiPermissionChatbotBackendDevChatbotApi322FF874PUTprojectsprojectId54BD799D"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/PUT/ApiPermission.Test.ChatbotBackendDevChatbotApi322FF874.PUT..projects.{projectId}": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdPUTApiPermissionTestChatbotBackendDevChatbotApi322FF874PUTprojectsprojectId65AED6EA"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/PUT/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdPUT698DA0B4"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/DELETE/ApiPermission.ChatbotBackendDevChatbotApi322FF874.DELETE..projects.{projectId}": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdDELETEApiPermissionChatbotBackendDevChatbotApi322FF874DELETEprojectsprojectId4D74128E"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/DELETE/ApiPermission.Test.ChatbotBackendDevChatbotApi322FF874.DELETE..projects.{projectId}": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdDELETEApiPermissionTestChatbotBackendDevChatbotApi322FF874DELETEprojectsprojectIdEC55F4D9"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/DELETE/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdDELETE464DF1B4"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/OPTIONS/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdOPTIONS5D1BF97B"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/generate/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgenerate914AE84A"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/generate/POST/ApiPermission.ChatbotBackendDevChatbotApi322FF874.POST..projects.{projectId}.generate": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgeneratePOSTApiPermissionChatbotBackendDevChatbotApi322FF874POSTprojectsprojectIdgenerate8F5051A1"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/generate/POST/ApiPermission.Test.ChatbotBackendDevChatbotApi322FF874.POST..projects.{projectId}.generate": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgeneratePOSTApiPermissionTestChatbotBackendDevChatbotApi322FF874POSTprojectsprojectIdgenerateA7EB1857"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/generate/POST/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgeneratePOST9E58EAAA"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/generate/OPTIONS/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgenerateOPTIONSBB04658B"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/generate/stream/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgeneratestream5F54A93B"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/generate/stream/POST/ApiPermission.ChatbotBackendDevChatbotApi322FF874.POST..projects.{projectId}.generate.stream": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgeneratestreamPOSTApiPermissionChatbotBackendDevChatbotApi322FF874POSTprojectsprojectIdgeneratestreamA3CC2438"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/generate/stream/POST/ApiPermission.Test.ChatbotBackendDevChatbotApi322FF874.POST..projects.{projectId}.generate.stream": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgeneratestreamPOSTApiPermissionTestChatbotBackendDevChatbotApi322FF874POSTprojectsprojectIdgeneratestreamBF5F476F"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/generate/stream/POST/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgeneratestreamPOST0224207B"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/generate/stream/OPTIONS/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIdgeneratestreamOPTIONSE0647C09"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/upload-url/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIduploadurl05BB08C9"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/upload-url/GET/ApiPermission.ChatbotBackendDevChatbotApi322FF874.GET..projects.{projectId}.upload-url": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIduploadurlGETApiPermissionChatbotBackendDevChatbotApi322FF874GETprojectsprojectIduploadurlAAFB5F0E"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/upload-url/GET/ApiPermission.Test.ChatbotBackendDevChatbotApi322FF874.GET..projects.{projectId}.upload-url": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIduploadurlGETApiPermissionTestChatbotBackendDevChatbotApi322FF874GETprojectsprojectIduploadurlA09A8851"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/upload-url/GET/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIduploadurlGETE6E699E8"
-          }
-        ],
-        "/ChatbotBackendDev/ChatbotApi/Default/projects/{projectId}/upload-url/OPTIONS/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ChatbotApiprojectsprojectIduploadurlOPTIONS0A1FAA28"
-          }
-        ],
         "/ChatbotBackendDev/ChatbotApi/Default/prompts/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "ChatbotApiprompts03168F80"
           }
         ],
-        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{projectId}/Resource": [
+        "/ChatbotBackendDev/ChatbotApi/Default/prompts/POST/ApiPermission.ChatbotBackendDevChatbotApi322FF874.POST..prompts": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectId19E3E387"
+            "data": "ChatbotApipromptsPOSTApiPermissionChatbotBackendDevChatbotApi322FF874POSTpromptsF54C02AD"
           }
         ],
-        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{projectId}/POST/ApiPermission.ChatbotBackendDevChatbotApi322FF874.POST..prompts.{projectId}": [
+        "/ChatbotBackendDev/ChatbotApi/Default/prompts/POST/ApiPermission.Test.ChatbotBackendDevChatbotApi322FF874.POST..prompts": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdPOSTApiPermissionChatbotBackendDevChatbotApi322FF874POSTpromptsprojectId9BBDA4A7"
+            "data": "ChatbotApipromptsPOSTApiPermissionTestChatbotBackendDevChatbotApi322FF874POSTpromptsF6174C90"
           }
         ],
-        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{projectId}/POST/ApiPermission.Test.ChatbotBackendDevChatbotApi322FF874.POST..prompts.{projectId}": [
+        "/ChatbotBackendDev/ChatbotApi/Default/prompts/POST/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdPOSTApiPermissionTestChatbotBackendDevChatbotApi322FF874POSTpromptsprojectIdEB74E734"
+            "data": "ChatbotApipromptsPOST42566DEB"
           }
         ],
-        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{projectId}/POST/Resource": [
+        "/ChatbotBackendDev/ChatbotApi/Default/prompts/GET/ApiPermission.ChatbotBackendDevChatbotApi322FF874.GET..prompts": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdPOSTB0BC6E69"
+            "data": "ChatbotApipromptsGETApiPermissionChatbotBackendDevChatbotApi322FF874GETprompts8DBC66A0"
           }
         ],
-        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{projectId}/GET/ApiPermission.ChatbotBackendDevChatbotApi322FF874.GET..prompts.{projectId}": [
+        "/ChatbotBackendDev/ChatbotApi/Default/prompts/GET/ApiPermission.Test.ChatbotBackendDevChatbotApi322FF874.GET..prompts": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdGETApiPermissionChatbotBackendDevChatbotApi322FF874GETpromptsprojectIdE33608ED"
+            "data": "ChatbotApipromptsGETApiPermissionTestChatbotBackendDevChatbotApi322FF874GETpromptsFE3A5B80"
           }
         ],
-        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{projectId}/GET/ApiPermission.Test.ChatbotBackendDevChatbotApi322FF874.GET..prompts.{projectId}": [
+        "/ChatbotBackendDev/ChatbotApi/Default/prompts/GET/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdGETApiPermissionTestChatbotBackendDevChatbotApi322FF874GETpromptsprojectIdA49F8212"
+            "data": "ChatbotApipromptsGET5D69D06D"
           }
         ],
-        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{projectId}/GET/Resource": [
+        "/ChatbotBackendDev/ChatbotApi/Default/prompts/OPTIONS/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdGETA45C1BBF"
+            "data": "ChatbotApipromptsOPTIONSD31AFF06"
           }
         ],
-        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{projectId}/OPTIONS/Resource": [
+        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{promptId}/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdOPTIONSF06E1FF0"
+            "data": "ChatbotApipromptspromptId68497969"
           }
         ],
-        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{projectId}/{promptId}/Resource": [
+        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{promptId}/PUT/ApiPermission.ChatbotBackendDevChatbotApi322FF874.PUT..prompts.{promptId}": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdE36110FF"
+            "data": "ChatbotApipromptspromptIdPUTApiPermissionChatbotBackendDevChatbotApi322FF874PUTpromptspromptId1E1E7E0C"
           }
         ],
-        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{projectId}/{promptId}/PUT/ApiPermission.ChatbotBackendDevChatbotApi322FF874.PUT..prompts.{projectId}.{promptId}": [
+        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{promptId}/PUT/ApiPermission.Test.ChatbotBackendDevChatbotApi322FF874.PUT..prompts.{promptId}": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdPUTApiPermissionChatbotBackendDevChatbotApi322FF874PUTpromptsprojectIdpromptIdBB5D1BB5"
+            "data": "ChatbotApipromptspromptIdPUTApiPermissionTestChatbotBackendDevChatbotApi322FF874PUTpromptspromptIdEF8B83FF"
           }
         ],
-        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{projectId}/{promptId}/PUT/ApiPermission.Test.ChatbotBackendDevChatbotApi322FF874.PUT..prompts.{projectId}.{promptId}": [
+        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{promptId}/PUT/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdPUTApiPermissionTestChatbotBackendDevChatbotApi322FF874PUTpromptsprojectIdpromptId0DE42A94"
+            "data": "ChatbotApipromptspromptIdPUT78CF7F84"
           }
         ],
-        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{projectId}/{promptId}/PUT/Resource": [
+        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{promptId}/DELETE/ApiPermission.ChatbotBackendDevChatbotApi322FF874.DELETE..prompts.{promptId}": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdPUTE2B0EB9B"
+            "data": "ChatbotApipromptspromptIdDELETEApiPermissionChatbotBackendDevChatbotApi322FF874DELETEpromptspromptId00940050"
           }
         ],
-        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{projectId}/{promptId}/DELETE/ApiPermission.ChatbotBackendDevChatbotApi322FF874.DELETE..prompts.{projectId}.{promptId}": [
+        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{promptId}/DELETE/ApiPermission.Test.ChatbotBackendDevChatbotApi322FF874.DELETE..prompts.{promptId}": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdDELETEApiPermissionChatbotBackendDevChatbotApi322FF874DELETEpromptsprojectIdpromptId97CE9E12"
+            "data": "ChatbotApipromptspromptIdDELETEApiPermissionTestChatbotBackendDevChatbotApi322FF874DELETEpromptspromptId57FF8CCF"
           }
         ],
-        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{projectId}/{promptId}/DELETE/ApiPermission.Test.ChatbotBackendDevChatbotApi322FF874.DELETE..prompts.{projectId}.{promptId}": [
+        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{promptId}/DELETE/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdDELETEApiPermissionTestChatbotBackendDevChatbotApi322FF874DELETEpromptsprojectIdpromptId5BF3FDC9"
+            "data": "ChatbotApipromptspromptIdDELETE6E11EF0B"
           }
         ],
-        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{projectId}/{promptId}/DELETE/Resource": [
+        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{promptId}/OPTIONS/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdDELETE3E80054F"
+            "data": "ChatbotApipromptspromptIdOPTIONS9B08327A"
           }
         ],
-        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{projectId}/{promptId}/OPTIONS/Resource": [
+        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{promptId}/content/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdOPTIONSC3B47CB2"
+            "data": "ChatbotApipromptspromptIdcontent206EE1A8"
           }
         ],
-        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{projectId}/{promptId}/content/Resource": [
+        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{promptId}/content/GET/ApiPermission.ChatbotBackendDevChatbotApi322FF874.GET..prompts.{promptId}.content": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdcontentB26C6C6D"
+            "data": "ChatbotApipromptspromptIdcontentGETApiPermissionChatbotBackendDevChatbotApi322FF874GETpromptspromptIdcontent9DADD9BC"
           }
         ],
-        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{projectId}/{promptId}/content/GET/ApiPermission.ChatbotBackendDevChatbotApi322FF874.GET..prompts.{projectId}.{promptId}.content": [
+        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{promptId}/content/GET/ApiPermission.Test.ChatbotBackendDevChatbotApi322FF874.GET..prompts.{promptId}.content": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdcontentGETApiPermissionChatbotBackendDevChatbotApi322FF874GETpromptsprojectIdpromptIdcontentFCD4B2F6"
+            "data": "ChatbotApipromptspromptIdcontentGETApiPermissionTestChatbotBackendDevChatbotApi322FF874GETpromptspromptIdcontent1BA2BC6A"
           }
         ],
-        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{projectId}/{promptId}/content/GET/ApiPermission.Test.ChatbotBackendDevChatbotApi322FF874.GET..prompts.{projectId}.{promptId}.content": [
+        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{promptId}/content/GET/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdcontentGETApiPermissionTestChatbotBackendDevChatbotApi322FF874GETpromptsprojectIdpromptIdcontent3AC08329"
+            "data": "ChatbotApipromptspromptIdcontentGET99478210"
           }
         ],
-        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{projectId}/{promptId}/content/GET/Resource": [
+        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{promptId}/content/OPTIONS/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdcontentGET1E94210C"
+            "data": "ChatbotApipromptspromptIdcontentOPTIONS8E77BB19"
           }
         ],
-        "/ChatbotBackendDev/ChatbotApi/Default/prompts/{projectId}/{promptId}/content/OPTIONS/Resource": [
+        "/ChatbotBackendDev/ChatbotApi/Default/generate/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ChatbotApipromptsprojectIdpromptIdcontentOPTIONSAF2F611C"
+            "data": "ChatbotApigenerate2D00A9C0"
+          }
+        ],
+        "/ChatbotBackendDev/ChatbotApi/Default/generate/POST/ApiPermission.ChatbotBackendDevChatbotApi322FF874.POST..generate": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigeneratePOSTApiPermissionChatbotBackendDevChatbotApi322FF874POSTgenerate9A05E036"
+          }
+        ],
+        "/ChatbotBackendDev/ChatbotApi/Default/generate/POST/ApiPermission.Test.ChatbotBackendDevChatbotApi322FF874.POST..generate": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigeneratePOSTApiPermissionTestChatbotBackendDevChatbotApi322FF874POSTgenerate390AADE1"
+          }
+        ],
+        "/ChatbotBackendDev/ChatbotApi/Default/generate/POST/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigeneratePOST3955818A"
+          }
+        ],
+        "/ChatbotBackendDev/ChatbotApi/Default/generate/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigenerateOPTIONS3A49FC1A"
+          }
+        ],
+        "/ChatbotBackendDev/ChatbotApi/Default/generate/stream/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigeneratestream540C4A3C"
+          }
+        ],
+        "/ChatbotBackendDev/ChatbotApi/Default/generate/stream/POST/ApiPermission.ChatbotBackendDevChatbotApi322FF874.POST..generate.stream": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigeneratestreamPOSTApiPermissionChatbotBackendDevChatbotApi322FF874POSTgeneratestreamAC1FC372"
+          }
+        ],
+        "/ChatbotBackendDev/ChatbotApi/Default/generate/stream/POST/ApiPermission.Test.ChatbotBackendDevChatbotApi322FF874.POST..generate.stream": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigeneratestreamPOSTApiPermissionTestChatbotBackendDevChatbotApi322FF874POSTgeneratestream54D60BC6"
+          }
+        ],
+        "/ChatbotBackendDev/ChatbotApi/Default/generate/stream/POST/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigeneratestreamPOSTB9582EC7"
+          }
+        ],
+        "/ChatbotBackendDev/ChatbotApi/Default/generate/stream/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ChatbotApigeneratestreamOPTIONS87864C2D"
           }
         ],
         "/ChatbotBackendDev/ChatbotApi/Default/conversations/Resource": [
@@ -4941,12 +4389,6 @@
             "data": "WebSocketDisconnectFunction189772FC"
           }
         ],
-        "/ChatbotBackendDev/WebSocketStreamFunction/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "WebSocketStreamFunctionB192D3D1"
-          }
-        ],
         "/ChatbotBackendDev/ChatbotWebSocketApi/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -5007,6 +4449,12 @@
             "data": "ChatbotWebSocketApistreamRoute8824CB30"
           }
         ],
+        "/ChatbotBackendDev/WebSocketStreamFunction/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "WebSocketStreamFunctionB192D3D1"
+          }
+        ],
         "/ChatbotBackendDev/WebSocketStage/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -5023,18 +4471,6 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "GenerateErrorAlarmE8D59242"
-          }
-        ],
-        "/ChatbotBackendDev/ProjectErrorAlarm/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ProjectErrorAlarmEFDF66E6"
-          }
-        ],
-        "/ChatbotBackendDev/SavePromptErrorAlarm/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "SavePromptErrorAlarm3BFF9698"
           }
         ],
         "/ChatbotBackendDev/AuthErrorAlarm/Resource": [
@@ -5128,7 +4564,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::887078546492:role/cdk-hnb659fds-deploy-role-887078546492-ap-northeast-2",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::887078546492:role/cdk-hnb659fds-cfn-exec-role-887078546492-ap-northeast-2",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-887078546492-ap-northeast-2/05efd487fd198a95e29acef48655bbc4a8df8c9cb9ce676396610937cb35c3e9.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-887078546492-ap-northeast-2/1952d5d02bc84a78dcd5b120db42202d5a006a7165309b968aa1bab971171e0e.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -5282,7 +4718,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::887078546492:role/cdk-hnb659fds-deploy-role-887078546492-ap-northeast-2",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::887078546492:role/cdk-hnb659fds-cfn-exec-role-887078546492-ap-northeast-2",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-887078546492-ap-northeast-2/2866acca8880f3690e3a9b6c1d3d6925b644df1fbd79a170e855b5e89be917a3.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-887078546492-ap-northeast-2/ee92fe864212e117314289be04e256436306afc1ee01dac767d9dabbf9a684af.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [

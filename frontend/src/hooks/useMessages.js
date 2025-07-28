@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { conversationAPI, mockMessages } from "../services/api";
+import { conversationAPI } from "../services/api";
 
 /**
  * 특정 대화의 메시지 관리를 위한 커스텀 훅
@@ -34,43 +34,59 @@ export const useMessages = (conversationId) => {
       setError(null);
 
       try {
-        const cursor = reset ? null : nextCursor;
-        const response = await conversationAPI.getMessages(
+        console.log("🔍 [DEBUG] useMessages - 세션 기반 메시지 로드:", {
           conversationId,
-          cursor
-        );
+          reset,
+          currentMessagesCount: messages.length,
+        });
 
-        console.log("useMessages - API 응답:", {
+        // 세션 스토리지에서 메시지 불러오기
+        let conversationMessages = [];
+
+        if (conversationId) {
+          const conversationKey = `conversation_${conversationId}`;
+          const conversationData = sessionStorage.getItem(conversationKey);
+
+          if (conversationData) {
+            try {
+              const conversation = JSON.parse(conversationData);
+              conversationMessages = conversation.messages || [];
+              console.log(
+                "🔍 [DEBUG] 세션에서 메시지 로드 완료:",
+                conversationMessages.length
+              );
+            } catch (parseError) {
+              console.warn("대화 데이터 파싱 실패:", parseError);
+            }
+          } else {
+            console.log(
+              "🔍 [DEBUG] 세션에서 대화를 찾을 수 없음:",
+              conversationId
+            );
+          }
+        }
+
+        console.log("useMessages - 세션 데이터:", {
           conversationId,
-          messagesReceived: response.messages?.length || 0,
-          hasMore: response.hasMore,
-          nextCursor: response.nextCursor,
+          messagesReceived: conversationMessages.length,
+          hasMore: false,
           reset,
         });
 
         if (reset) {
-          setMessages(response.messages);
+          setMessages(conversationMessages);
         } else {
           // 이전 메시지들을 앞에 추가 (페이지네이션)
-          setMessages((prev) => [...response.messages, ...prev]);
+          setMessages((prev) => [...conversationMessages, ...prev]);
         }
 
-        setHasMore(response.hasMore);
-        setNextCursor(response.nextCursor);
-      } catch (err) {
-        console.error("메시지 로드 실패:", err);
-        console.error("실패한 conversationId:", conversationId);
-        setError("메시지를 불러오는데 실패했습니다.");
-
-        // API 실패시 mock 데이터로 fallback
-        const conversationMessages = mockMessages[conversationId] || [];
-        console.log("useMessages - Mock 데이터 사용:", {
-          conversationId,
-          mockMessagesCount: conversationMessages.length,
-        });
+        setHasMore(false); // 세션 기반에서는 페이징 불필요
+        setNextCursor(null);
+      } catch (error) {
+        console.error("세션 메시지 로드 실패:", error);
 
         if (reset) {
-          setMessages(conversationMessages);
+          setMessages([]);
           setHasMore(false);
           setNextCursor(null);
         }

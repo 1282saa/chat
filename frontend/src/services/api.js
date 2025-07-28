@@ -1,40 +1,8 @@
 import axios from "axios";
-import { config } from "../aws-config";
+import { config } from "../config/aws-config";
 
 // API 기본 설정 - 새로운 배포된 API Gateway URL 사용
 const API_BASE_URL = config.apiGateway.URL;
-
-// Mock data for development
-const mockUsageData = {
-  todayRequests: 127,
-  todayTokens: 45320,
-  monthlyLimit: 1000000,
-  monthlyUsed: 523400,
-  plan: {
-    name: "Professional",
-    expiresAt: "2025-02-28",
-    features: ["월 100만 토큰", "우선 지원", "API 액세스"],
-  },
-  chartData: Array.from({ length: 30 }, (_, i) => ({
-    date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .split("T")[0],
-    tokens: Math.floor(Math.random() * 30000) + 10000,
-    requests: Math.floor(Math.random() * 100) + 50,
-  })),
-  recentLogs: Array.from({ length: 20 }, (_, i) => ({
-    id: `log-${i}`,
-    timestamp: new Date(Date.now() - i * 60 * 60 * 1000).toISOString(),
-    model: [
-      "Claude 3 Sonnet (APAC)",
-      "Claude 3.5 Sonnet (APAC)",
-      "Claude 3 Haiku (APAC)",
-    ][Math.floor(Math.random() * 3)],
-    tokens: Math.floor(Math.random() * 5000) + 1000,
-    duration: Math.floor(Math.random() * 3000) + 500,
-    status: Math.random() > 0.1 ? "success" : "error",
-  })),
-};
 
 // Axios 인스턴스
 const api = axios.create({
@@ -46,12 +14,6 @@ const api = axios.create({
 // 요청 인터셉터 - 인증 토큰 자동 추가
 api.interceptors.request.use(async (config) => {
   console.log("API 요청:", config.method?.toUpperCase(), config.url);
-
-  // 개발 모드에서 인증 스킵
-  if (process.env.REACT_APP_SKIP_AUTH === "true") {
-    console.log("🔓 개발 모드: 인증 스킵");
-    return config;
-  }
 
   // 인증이 필요한 요청에 토큰 추가
   try {
@@ -212,7 +174,7 @@ const mapBackendToFrontend = {
 /**
  * Mock 데이터와 실제 API 간 전환을 위한 플래그
  */
-const USE_MOCK_DATA = process.env.REACT_APP_USE_MOCK_DATA === "true";
+// 운영 환경에서는 실제 API만 사용
 
 /**
  * 🔍 API 연결 상태 확인 함수
@@ -220,7 +182,6 @@ const USE_MOCK_DATA = process.env.REACT_APP_USE_MOCK_DATA === "true";
 export const testApiConnection = async () => {
   console.log("🔍 API 연결 상태 확인 중...");
   console.log("- API Base URL:", API_BASE_URL);
-  console.log("- Use Mock Data:", USE_MOCK_DATA);
   console.log("- Node Env:", process.env.NODE_ENV);
 
   try {
@@ -1093,22 +1054,13 @@ export const calculatePromptStats = (promptCards) => {
 export const getUsage = async (range = "month") => {
   console.log("사용량 데이터 조회 요청:", { range });
 
-  // Mock 데이터 사용 모드이거나 개발 모드일 때
-  if (USE_MOCK_DATA || process.env.NODE_ENV === "development") {
-    console.log("🔄 Mock 사용량 데이터 반환");
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    return mockUsageData;
-  }
-
   try {
     const response = await api.get(`/usage?range=${range}`);
     console.log("✅ 사용량 API 호출 성공");
     return response.data;
   } catch (error) {
-    console.warn("⚠️ 사용량 API 호출 실패, Mock 데이터로 폴백:", error.message);
-    // Fallback to mock data
-    return mockUsageData;
+    console.error("❌ 사용량 API 호출 실패:", error.message);
+    throw error;
   }
 };
 
@@ -1145,15 +1097,6 @@ export const conversationAPI = {
       };
     } catch (error) {
       console.error("대화 목록 조회 실패:", error);
-      // Mock 데이터로 폴백 (개발 시)
-      if (USE_MOCK_DATA || process.env.NODE_ENV === "development") {
-        console.log("🔄 Mock 데이터로 폴백");
-        return {
-          conversations: mockConversations,
-          hasMore: false,
-          nextCursor: null,
-        };
-      }
       throw error;
     }
   },
@@ -1198,16 +1141,6 @@ export const conversationAPI = {
       };
     } catch (error) {
       console.error("메시지 조회 실패:", error);
-      // Mock 데이터로 폴백 (개발 시)
-      if (USE_MOCK_DATA || process.env.NODE_ENV === "development") {
-        console.log("🔄 Mock 메시지 데이터로 폴백");
-        const mockMessageData = mockMessages[conversationId] || [];
-        return {
-          messages: mockMessageData,
-          hasMore: false,
-          nextCursor: null,
-        };
-      }
       throw error;
     }
   },

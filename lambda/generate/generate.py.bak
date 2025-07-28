@@ -26,8 +26,8 @@ except ImportError as e:
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-# 환경 변수 - CDK 스택의 실제 값들 사용
-MODEL_ID = "apac.anthropic.claude-3-sonnet-20240229-v1:0"  # CDK 기본값과 동일
+# 환경 변수
+MODEL_ID = "anthropic.claude-3-sonnet-20240229-v1:0"
 
 def lambda_handler(event, context):
     """메인 Lambda 핸들러 - REST API 방식"""
@@ -49,7 +49,7 @@ def lambda_handler(event, context):
             body = event.get('queryStringParameters') or {}
         
         user_input = body.get('userInput', '').strip()
-                chat_history = body.get('chat_history', [])
+        chat_history = body.get('chat_history', [])
         model_id = body.get('modelId', MODEL_ID)
         
         if not user_input:
@@ -63,7 +63,7 @@ def lambda_handler(event, context):
             return _handle_streaming_generation(news_processor, user_input, chat_history, model_id)
         else:
             return _handle_standard_generation(news_processor, user_input, chat_history, model_id)
-
+            
     except Exception as e:
         logger.error(f"❌ Handler 오류: {str(e)}")
         logger.error(f"❌ Traceback: {traceback.format_exc()}")
@@ -90,7 +90,7 @@ def _handle_standard_generation(news_processor, user_input, chat_history, model_
                 'timestamp': datetime.now().isoformat()
             }, ensure_ascii=False, cls=DecimalEncoder)
         }
-                
+        
     except Exception as e:
         logger.error(f"❌ 생성 오류: {str(e)}")
         return _create_error_response(500, f"생성 중 오류가 발생했습니다: {e}")
@@ -188,4 +188,4 @@ def _get_cors_headers():
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-        } 
+    } 

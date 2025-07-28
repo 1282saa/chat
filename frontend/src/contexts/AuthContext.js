@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import { Amplify } from "aws-amplify";
 import {
   signUp,
@@ -11,7 +17,7 @@ import {
   resetPassword,
   confirmResetPassword,
 } from "aws-amplify/auth";
-import { config } from "../aws-config";
+import { config } from "../config/aws-config";
 
 // Amplify 설정 - 새로운 형식으로 변환
 console.log("AWS Config loaded:", config);
@@ -54,27 +60,10 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    checkAuthStatus();
-  }, []);
-
-  const checkAuthStatus = async () => {
+  const checkAuthStatus = useCallback(async () => {
     try {
+      console.log("🔍 사용자 인증 상태 확인 시작");
       setLoading(true);
-
-      // 개발 모드에서 인증 스킵
-      if (process.env.REACT_APP_SKIP_AUTH === "true") {
-        console.log("🔓 개발 모드: 인증 스킵 - 더미 사용자 생성");
-        setIsAuthenticated(true);
-        setUser({
-          id: "dev-user-001",
-          email: "dev@example.com",
-          name: "개발자",
-          role: "admin",
-          groups: ["admin"],
-        });
-        return;
-      }
 
       const currentUser = await getCurrentUser();
       const session = await fetchAuthSession();
@@ -117,20 +106,18 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []); // useCallback 의존성 배열 - 빈 배열로 함수를 한 번만 생성
+
+  // useEffect를 checkAuthStatus 함수 정의 후에 배치
+  useEffect(() => {
+    checkAuthStatus();
+  }, [checkAuthStatus]);
 
   const login = async (credentials) => {
     try {
       const { email, password } = credentials;
 
       console.log("로그인 시도:", { email });
-
-      // 개발 모드에서 인증 스킵
-      if (process.env.REACT_APP_SKIP_AUTH === "true") {
-        console.log("🔓 개발 모드: 로그인 스킵");
-        await checkAuthStatus();
-        return { success: true, user: { email } };
-      }
 
       const user = await signIn({ username: email, password });
 

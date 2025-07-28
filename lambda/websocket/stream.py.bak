@@ -37,26 +37,25 @@ apigateway = boto3.client('apigatewaymanagementapi',
     endpoint_url=f"https://{os.environ.get('API_GATEWAY_DOMAIN')}/{os.environ.get('STAGE', 'prod')}"
 )
 
-# 환경 변수 - CDK 스택의 실제 값들 사용
-KNOWLEDGE_BASE_ID = os.environ.get('KNOWLEDGE_BASE_ID', 'PGQV3JXPET')
-MODEL_ID = "apac.anthropic.claude-3-sonnet-20240229-v1:0"  # CDK 기본값과 동일
+# 환경 변수
+MODEL_ID = "anthropic.claude-3-sonnet-20240229-v1:0"
 
-def handler(event, context):
+def lambda_handler(event, context):
     """WebSocket 메시지 처리"""
     try:
         connection_id = event['requestContext']['connectionId']
         
         if event['requestContext']['eventType'] == 'MESSAGE':
-        body = json.loads(event.get('body', '{}'))
-        action = body.get('action')
-        
-        if action == 'stream':
-            return handle_stream_request(connection_id, body)
-        else:
+            body = json.loads(event.get('body', '{}'))
+            action = body.get('action')
+            
+            if action == 'stream':
+                return handle_stream_request(connection_id, body)
+            else:
                 return send_error(connection_id, "지원하지 않는 액션입니다.")
         
         return {'statusCode': 200}
-            
+        
     except Exception as e:
         logger.error(f"❌ WebSocket 핸들러 오류: {str(e)}")
         logger.error(f"❌ Traceback: {traceback.format_exc()}")
@@ -151,7 +150,7 @@ def stream_bedrock_response_realtime(connection_id, prompt, model_id):
             body=json.dumps(request_body)
         )
         
-        # 실시간으로 클라이언트에 스트리밍 전송
+        # 🔥 실시간으로 클라이언트에 스트리밍 전송
         full_response = ""
         for event in response['body']:
             chunk = json.loads(event['chunk']['bytes'])
@@ -162,13 +161,13 @@ def stream_bedrock_response_realtime(connection_id, prompt, model_id):
                     # ⚡ 즉시 실시간 청크 전송
                     send_stream_chunk(connection_id, text, is_partial=True)
         
-        # 완료된 전체 응답 전송
+        # 📄 완료된 전체 응답 전송
         send_stream_chunk(connection_id, full_response, is_partial=False, is_complete=True)
         
-        logger.info(f"실시간 스트리밍 생성 완료: {len(full_response)}자")
-            
+        logger.info(f"✅ 실시간 스트리밍 생성 완료: {len(full_response)}자")
+        
     except Exception as e:
-        logger.error(f"실시간 스트리밍 생성 오류: {e}")
+        logger.error(f"❌ 실시간 스트리밍 생성 오류: {e}")
         send_error(connection_id, f"답변 생성 중 오류가 발생했습니다: {e}")
 
 def send_status_message(connection_id, status, message):
@@ -181,9 +180,9 @@ def send_status_message(connection_id, status, message):
             "timestamp": datetime.now().isoformat()
         }
         send_message(connection_id, status_message)
-        logger.info(f"상태 메시지 전송: {status} - {message}")
+        logger.info(f"📤 상태 메시지 전송: {status} - {message}")
     except Exception as e:
-        logger.error(f"상태 메시지 전송 오류: {e}")
+        logger.error(f"❌ 상태 메시지 전송 오류: {e}")
 
 def send_stream_chunk(connection_id, content, is_partial=True, is_complete=False):
     """스트리밍 청크 전송 - 실시간 텍스트 전송"""
@@ -197,7 +196,7 @@ def send_stream_chunk(connection_id, content, is_partial=True, is_complete=False
         }
         send_message(connection_id, chunk_message)
     except Exception as e:
-        logger.error(f"스트림 청크 전송 오류: {e}")
+        logger.error(f"❌ 스트림 청크 전송 오류: {e}")
 
 def send_message(connection_id, message):
     """WebSocket 메시지 전송"""
@@ -207,7 +206,7 @@ def send_message(connection_id, message):
             Data=json.dumps(message, ensure_ascii=False)
         )
     except Exception as e:
-        logger.error(f"메시지 전송 오류: {e}")
+        logger.error(f"❌ 메시지 전송 오류: {e}")
 
 def send_error(connection_id, error_message):
     """에러 메시지 전송"""
@@ -220,5 +219,5 @@ def send_error(connection_id, error_message):
         send_message(connection_id, error_msg)
         return {'statusCode': 200}
     except Exception as e:
-        logger.error(f"에러 전송 실패: {e}")
+        logger.error(f"❌ 에러 전송 실패: {e}")
         return {'statusCode': 500}

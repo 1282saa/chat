@@ -60,10 +60,7 @@ class ChatbotStack(Stack):
         # 9. CloudWatch 알람 생성
         self.create_cloudwatch_alarms()
         
-        # 10. 비용 알람 생성
-        # self.create_budget_alarms()  # 권한 문제로 임시 비활성화
-        
-        # 11. CDK 출력값 생성
+        # 10. CDK 출력값 생성
         self.create_outputs()
 
     def create_cognito_user_pool(self):
@@ -266,42 +263,29 @@ class ChatbotStack(Stack):
         # 기존 테이블들
         # =============================================================================
         
-        # 프로젝트 메타데이터 테이블
-        self.project_table = dynamodb.Table(
-            self, "ProjectTable",
-            table_name="chatbot-projects",
-            partition_key=dynamodb.Attribute(
-                name="projectId",
-                type=dynamodb.AttributeType.STRING
-            ),
-            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
-            removal_policy=RemovalPolicy.DESTROY,
-            point_in_time_recovery_specification=dynamodb.PointInTimeRecoverySpecification(
-                point_in_time_recovery_enabled=True
-            )
-        )
 
-        # 프롬프트 메타데이터 테이블 (확장)
+
+        # 프롬프트 메타데이터 테이블 (프로젝트 개념 제거)
         self.prompt_meta_table = dynamodb.Table(
             self, "PromptMetaTable",
             table_name="chatbot-prompts",
             partition_key=dynamodb.Attribute(
-                name="projectId",
+                name="user_id",  # 사용자 ID로 변경
                 type=dynamodb.AttributeType.STRING
             ),
             sort_key=dynamodb.Attribute(
-                name="promptId",  # UUID 기반 promptId로 변경
+                name="promptId",  # UUID 기반 promptId
                 type=dynamodb.AttributeType.STRING
             ),
             billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
             removal_policy=RemovalPolicy.DESTROY
         )
         
-        # GSI: step_order 기반 정렬을 위한 인덱스
+        # GSI: step_order 기반 정렬을 위한 인덱스 (사용자별)
         self.prompt_meta_table.add_global_secondary_index(
-            index_name="projectId-stepOrder-index",
+            index_name="user_id-stepOrder-index",
             partition_key=dynamodb.Attribute(
-                name="projectId",
+                name="user_id",
                 type=dynamodb.AttributeType.STRING
             ),
             sort_key=dynamodb.Attribute(
@@ -311,12 +295,12 @@ class ChatbotStack(Stack):
             projection_type=dynamodb.ProjectionType.ALL
         )
 
-        # 대화/생성 기록 테이블
+        # 대화/생성 기록 테이블 (프로젝트 개념 제거)
         self.conversation_table = dynamodb.Table(
             self, "ConversationTable",
             table_name="chatbot-conversations",
             partition_key=dynamodb.Attribute(
-                name="projectId",
+                name="user_id",  # 사용자 ID로 변경
                 type=dynamodb.AttributeType.STRING
             ),
             sort_key=dynamodb.Attribute(
@@ -520,9 +504,8 @@ class ChatbotStack(Stack):
                     "arn:aws:s3:::seoul-economic-news-data-2025",
                     "arn:aws:s3:::seoul-economic-news-data-2025/*",
                     # 기존 테이블들
-                    self.project_table.table_arn,
                     self.prompt_meta_table.table_arn,
-                    self.prompt_meta_table.table_arn + "/index/projectId-stepOrder-index",
+                    self.prompt_meta_table.table_arn + "/index/user_id-stepOrder-index",
                     self.conversation_table.table_arn,
                     self.execution_table.table_arn,
                     # 새로 추가된 사용자 관리 테이블들
@@ -534,7 +517,7 @@ class ChatbotStack(Stack):
                     self.subscriptions_table.table_arn + "/index/status-expiry_date-index",
                     # Prompt 메타 테이블
                     self.prompt_meta_table.table_arn,
-                    self.prompt_meta_table.table_arn + "/index/projectId-stepOrder-index",
+                    self.prompt_meta_table.table_arn + "/index/user_id-stepOrder-index",
                     # Enhanced Agent System용 새로운 테이블들
                     self.perplexity_cache_table.table_arn,
                     self.execution_metrics_table.table_arn,
@@ -550,43 +533,38 @@ class ChatbotStack(Stack):
             )
         )
 
-        # Enhanced Agent System을 위한 Lambda Layer 생성
-        self.enhanced_agents_layer = lambda_.LayerVersion(
-            self, "EnhancedAgentsLayer",
+        # 간단화된 뉴스 처리 시스템을 위한 Lambda Layer 생성
+        self.news_processing_layer = lambda_.LayerVersion(
+            self, "NewsProcessingLayer",
             code=lambda_.Code.from_asset("../lambda", 
                 bundling=BundlingOptions(
                     image=lambda_.Runtime.PYTHON_3_11.bundling_image,
                     command=[
                         "bash", "-c",
                         "mkdir -p /asset-output/python && "
-                        "cp -r /asset-input/smart_router /asset-output/python/ && "
-                        "cp -r /asset-input/react_planning /asset-output/python/ && "
                         "cp -r /asset-input/date_intelligence /asset-output/python/ && "
                         "cp -r /asset-input/external_search /asset-output/python/ && "
-                        "cp -r /asset-input/workflow_engine /asset-output/python/ && "
-                        "cp -r /asset-input/agents /asset-output/python/ && "
                         "cp -r /asset-input/utils /asset-output/python/ && "
                         "pip install -r /asset-input/lambda_layers/langchain/requirements.txt -t /asset-output/python/ && "
-                        "echo 'Enhanced Agent System Layer 강제 업데이트 완료 - 2025-01-28-10-30' && "
+                        "echo '서울경제신문 AI 요약 시스템 Layer 업데이트 완료 - 2025-07-28' && "
                         "ls -la /asset-output/python/"
                     ]
                 )
             ),
             compatible_runtimes=[lambda_.Runtime.PYTHON_3_11],
-            description="Enhanced Agent System for intelligent news processing - Force Update 2025-01-28"
+            description="서울경제신문 AI 요약 시스템 - 간단화된 7단계 플로우 처리"
         )
 
-        # 1. Lambda (핵심 기능) - Enhanced Agent System 적용
+        # 1. Lambda (핵심 기능) - 간단화된 뉴스 처리 시스템 적용
         self.generate_lambda = lambda_.Function(
             self, "GenerateFunction",
             runtime=lambda_.Runtime.PYTHON_3_11,
-            handler="generate.handler",
-            # 🔧 강제 재배포를 위해 코드 자산을 명시적으로 지정
+            handler="generate.lambda_handler",  # 수정된 핸들러 이름
             code=lambda_.Code.from_asset("../lambda/generate"),
             timeout=Duration.minutes(15),
             memory_size=3008,
             role=lambda_role,
-            layers=[self.enhanced_agents_layer],  # 새로운 Layer 추가
+            layers=[self.news_processing_layer],  # 수정된 Layer 이름
             environment={
                 "PROMPT_META_TABLE": self.prompt_meta_table.table_name,
                 "PROMPT_BUCKET": self.prompt_bucket.bucket_name,
@@ -595,16 +573,11 @@ class ChatbotStack(Stack):
                 "OPENSEARCH_COLLECTION_ID": "i56h0ibud5e0sd0hz7ch",
                 "S3_BUCKET_NAME": "seoul-economic-news-data-2025",
                 "S3_DATA_PREFIX": "news-data-md/",
-                "NEWS_BUCKET": "seoul-economic-news-data-2025",  # 새로운 에이전트용
-                "PERPLEXITY_API_KEY": "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",  # 업데이트된 테스트 키
-                "PERPLEXITY_CACHE_TABLE": "perplexity-search-cache",  # 캐싱용 테이블
-                "EXECUTION_METRICS_TABLE": "workflow-execution-metrics",  # 메트릭용 테이블
+                "NEWS_BUCKET": "seoul-economic-news-data-2025",
+                "PERPLEXITY_API_KEY": "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",
+                "PERPLEXITY_CACHE_TABLE": "perplexity-search-cache",
+                "EXECUTION_METRICS_TABLE": "workflow-execution-metrics",
                 "REGION": self.region,
-                # APAC Claude 모델 설정
-                "SYNTHESIZER_MODEL_TIER": "fast",        # fast/balanced/advanced/high_performance/premium/latest
-                "REACT_MODEL_TIER": "fast",              # ReAct 계획에는 빠른 응답 우선
-                "SYNTHESIS_PRIORITY": "balance",         # speed/balance/quality
-                "APAC_MODELS_ENABLED": "true",           # APAC 모델 사용 활성화
             },
             dead_letter_queue=self.dlq
         )
@@ -615,39 +588,11 @@ class ChatbotStack(Stack):
         #     "InvokeMode": "RESPONSE_STREAM"
         # })
 
-        # 2. 프롬프트 저장 Lambda (단순화됨)
-        self.save_prompt_lambda = lambda_.Function(
-            self, "SavePromptFunction",
-            runtime=lambda_.Runtime.PYTHON_3_11,
-            handler="save_prompt.handler",
-            code=lambda_.Code.from_asset("../lambda/save_prompt"),
-            timeout=Duration.minutes(2),
-            memory_size=512,
-            role=lambda_role,
-            environment={
-                "PROMPT_META_TABLE": self.prompt_meta_table.table_name,
-                "PROMPT_BUCKET": self.prompt_bucket.bucket_name,
-                "REGION": self.region,
-            }
-        )
+        # 2. 프롬프트 저장 기능은 generate Lambda에서 통합 처리
+        # (별도 Lambda 함수 불필요 - 간단화됨)
+        self.save_prompt_lambda = self.generate_lambda  # generate Lambda가 프롬프트도 처리
 
-        # 3. 프로젝트 관리 Lambda
-        self.project_lambda = lambda_.Function(
-            self, "ProjectFunction",
-            runtime=lambda_.Runtime.PYTHON_3_11,
-            handler="project.handler",
-            code=lambda_.Code.from_asset("../lambda/project"),
-            timeout=Duration.minutes(1),
-            memory_size=256,
-            role=lambda_role,
-            environment={
-                "PROJECT_TABLE": self.project_table.table_name,
-                "PROMPT_BUCKET": self.prompt_bucket.bucket_name,
-                "REGION": self.region,
-            }
-        )
-
-        # 4. 인증 관리 Lambda
+        # 3. 인증 관리 Lambda
         self.auth_lambda = lambda_.Function(
             self, "AuthFunction",
             runtime=lambda_.Runtime.PYTHON_3_11,
@@ -659,10 +604,26 @@ class ChatbotStack(Stack):
             environment={
                 "USER_POOL_ID": self.user_pool.user_pool_id,
                 "USER_POOL_CLIENT_ID": self.user_pool_client.user_pool_client_id,
-                "USERS_TABLE": self.users_table.table_name,
-                "USAGE_TABLE": self.usage_table.table_name,
-                "SUBSCRIPTIONS_TABLE": self.subscriptions_table.table_name,
                 "REGION": self.region,
+                "LOG_LEVEL": "INFO",
+            }
+        )
+
+        # 4. 사용자 관리 Lambda (개선된 버전)
+        self.user_management_lambda = lambda_.Function(
+            self, "UserManagementFunction",
+            runtime=lambda_.Runtime.PYTHON_3_11,
+            handler="user_management.lambda_handler",
+            code=lambda_.Code.from_asset("../lambda/user_management"),
+            timeout=Duration.minutes(2),
+            memory_size=512,
+            role=lambda_role,
+            environment={
+                "USERS_TABLE_NAME": self.users_table.table_name,
+                "USAGE_TABLE_NAME": self.usage_table.table_name,
+                "SUBSCRIPTIONS_TABLE_NAME": self.subscriptions_table.table_name,
+                "USER_POOL_ID": self.user_pool.user_pool_id,
+                "LOG_LEVEL": "INFO",
             }
         )
 
@@ -679,24 +640,6 @@ class ChatbotStack(Stack):
                 "USER_POOL_ID": self.user_pool.user_pool_id,
                 "USER_POOL_CLIENT_ID": self.user_pool_client.user_pool_client_id,
                 "REGION": self.region,
-                "LOG_LEVEL": "INFO",
-            }
-        )
-
-        # 6. 사용자 관리 Lambda (개선된 버전)
-        self.user_management_lambda = lambda_.Function(
-            self, "UserManagementFunction",
-            runtime=lambda_.Runtime.PYTHON_3_11,
-            handler="user_management.lambda_handler",
-            code=lambda_.Code.from_asset("../lambda/user_management"),
-            timeout=Duration.minutes(2),
-            memory_size=512,
-            role=lambda_role,
-            environment={
-                "USERS_TABLE_NAME": self.users_table.table_name,
-                "USAGE_TABLE_NAME": self.usage_table.table_name,
-                "SUBSCRIPTIONS_TABLE_NAME": self.subscriptions_table.table_name,
-                "USER_POOL_ID": self.user_pool.user_pool_id,
                 "LOG_LEVEL": "INFO",
             }
         )
@@ -756,32 +699,11 @@ class ChatbotStack(Stack):
         # 사용자 관리 경로 생성
         self.create_user_routes()
         
-        # 프로젝트 관련 경로 생성
-        self.create_project_routes()
-        
         # 프롬프트 관리 경로 생성
         self.create_prompt_routes()
         
-        # CrewAI 관련 경로 생성
-        # self.create_crew_routes()  # CrewAI 기능 제거됨
-        
-        # 스트리밍 엔드포인트 추가
-        projects_resource = self.api.root.get_resource("projects")
-        project_resource = projects_resource.get_resource("{projectId}")
-        
-        # 스트리밍 리소스 생성
-        generate_resource = project_resource.get_resource("generate")
-        stream_resource = generate_resource.add_resource("stream")
-        
-        # 스트리밍 메서드 추가 (간소화된 설정)
-        stream_resource.add_method(
-            "POST",
-            apigateway.LambdaIntegration(self.generate_lambda, proxy=True),
-            authorization_type=apigateway.AuthorizationType.NONE
-        )
-        
-        # CORS 옵션 추가
-        self._create_cors_options_method(stream_resource, "OPTIONS,POST")
+        # 생성 관련 경로 생성 (프로젝트 개념 제거)
+        self.create_generate_routes()
 
     def create_auth_routes(self):
         """인증 관련 API 경로 생성"""
@@ -859,126 +781,58 @@ class ChatbotStack(Stack):
         # CORS 옵션 추가
         self._create_cors_options_method(subscription_resource, "GET,PUT,OPTIONS")
 
-    def create_project_routes(self):
-        """프로젝트 관련 API 경로 생성"""
-        projects_resource = self.api.root.add_resource("projects")
+    def create_prompt_routes(self):
+        """프롬프트 관리 API 경로 생성 - 사용자별 관리로 변경"""
+        prompts_resource = self.api.root.add_resource("prompts")
         
-        # POST /projects (프로젝트 생성)
-        projects_resource.add_method(
-            "POST",
-            apigateway.LambdaIntegration(self.project_lambda, proxy=True),
-            authorization_type=apigateway.AuthorizationType.NONE
-        )
-
-        # GET /projects (프로젝트 목록)
-        projects_resource.add_method(
-            "GET",
-            apigateway.LambdaIntegration(self.project_lambda, proxy=True),
-            authorization_type=apigateway.AuthorizationType.NONE
-        )
-        
-        # CORS 옵션 추가
-        self._create_cors_options_method(projects_resource, "GET,POST,PUT,DELETE,OPTIONS")
-
-        # /projects/{id} 리소스
-        project_resource = projects_resource.add_resource("{projectId}")
-        
-        # GET /projects/{id} (프로젝트 상세)
-        project_resource.add_method(
-            "GET",
-            apigateway.LambdaIntegration(self.project_lambda, proxy=True),
-            authorization_type=apigateway.AuthorizationType.NONE
-        )
-        
-        # PUT /projects/{id} (프로젝트 수정)
-        project_resource.add_method(
-            "PUT",
-            apigateway.LambdaIntegration(self.project_lambda, proxy=True),
-            authorization_type=apigateway.AuthorizationType.NONE
-        )
-        
-        # DELETE /projects/{id} (프로젝트 삭제)
-        project_resource.add_method(
-            "DELETE",
-            apigateway.LambdaIntegration(self.project_lambda, proxy=True),
-            authorization_type=apigateway.AuthorizationType.NONE
-        )
-        
-        # CORS 옵션 추가
-        self._create_cors_options_method(project_resource, "GET,POST,PUT,DELETE,OPTIONS")
-
-        # POST /projects/{id}/generate (제목 생성)
-        generate_resource = project_resource.add_resource("generate")
-        generate_resource.add_method(
+        # POST /prompts (새 프롬프트 카드 생성)
+        prompts_resource.add_method(
             "POST",
             apigateway.LambdaIntegration(self.generate_lambda, proxy=True),
-            authorization_type=apigateway.AuthorizationType.NONE
+            authorization_type=apigateway.AuthorizationType.CUSTOM,
+            authorizer=self.api_authorizer
         )
         
-        # CORS 옵션 추가
-        self._create_cors_options_method(generate_resource, "POST,OPTIONS")
-
-        # GET /projects/{id}/upload-url (파일 업로드용 pre-signed URL)
-        upload_url_resource = project_resource.add_resource("upload-url")
-        upload_url_resource.add_method(
+        # GET /prompts (프롬프트 카드 목록 조회)
+        prompts_resource.add_method(
             "GET",
-            apigateway.LambdaIntegration(self.project_lambda, proxy=True),
+            apigateway.LambdaIntegration(self.generate_lambda, proxy=True),
             authorization_type=apigateway.AuthorizationType.CUSTOM,
             authorizer=self.api_authorizer
         )
         
         # CORS 옵션 추가
-        self._create_cors_options_method(upload_url_resource, "GET,OPTIONS")
-
-    def create_prompt_routes(self):
-        """프롬프트 관리 API 경로 생성"""
-        prompts_resource = self.api.root.add_resource("prompts")
-        prompts_project_resource = prompts_resource.add_resource("{projectId}")
+        self._create_cors_options_method(prompts_resource, "GET,POST,PUT,DELETE,OPTIONS")
         
-        # POST /prompts/{projectId} (새 프롬프트 카드 생성)
-        prompts_project_resource.add_method(
-            "POST",
-            apigateway.LambdaIntegration(self.save_prompt_lambda, proxy=True),
-            authorization_type=apigateway.AuthorizationType.NONE
-        )
+        # /prompts/{promptId} 리소스
+        prompt_card_resource = prompts_resource.add_resource("{promptId}")
         
-        # GET /prompts/{projectId} (프롬프트 카드 목록 조회)
-        prompts_project_resource.add_method(
-            "GET",
-            apigateway.LambdaIntegration(self.save_prompt_lambda, proxy=True),
-            authorization_type=apigateway.AuthorizationType.NONE
-        )
-        
-        # CORS 옵션 추가
-        self._create_cors_options_method(prompts_project_resource, "GET,POST,PUT,DELETE,OPTIONS")
-        
-        # /prompts/{projectId}/{promptId} 리소스
-        prompt_card_resource = prompts_project_resource.add_resource("{promptId}")
-        
-        # PUT /prompts/{projectId}/{promptId} (프롬프트 카드 수정)
+        # PUT /prompts/{promptId} (프롬프트 카드 수정)
         prompt_card_resource.add_method(
             "PUT",
-            apigateway.LambdaIntegration(self.save_prompt_lambda, proxy=True),
-            authorization_type=apigateway.AuthorizationType.NONE
+            apigateway.LambdaIntegration(self.generate_lambda, proxy=True),
+            authorization_type=apigateway.AuthorizationType.CUSTOM,
+            authorizer=self.api_authorizer
         )
         
-        # DELETE /prompts/{projectId}/{promptId} (프롬프트 카드 삭제)
+        # DELETE /prompts/{promptId} (프롬프트 카드 삭제)
         prompt_card_resource.add_method(
             "DELETE",
-            apigateway.LambdaIntegration(self.save_prompt_lambda, proxy=True),
-            authorization_type=apigateway.AuthorizationType.NONE
+            apigateway.LambdaIntegration(self.generate_lambda, proxy=True),
+            authorization_type=apigateway.AuthorizationType.CUSTOM,
+            authorizer=self.api_authorizer
         )
         
         # CORS 옵션 추가
         self._create_cors_options_method(prompt_card_resource, "GET,POST,PUT,DELETE,OPTIONS")
         
-        # /prompts/{projectId}/{promptId}/content 리소스 추가
+        # /prompts/{promptId}/content 리소스 추가
         content_resource = prompt_card_resource.add_resource("content")
         
-        # GET /prompts/{projectId}/{promptId}/content (프롬프트 내용 조회)
+        # GET /prompts/{promptId}/content (프롬프트 내용 조회)
         content_resource.add_method(
             "GET",
-            apigateway.LambdaIntegration(self.save_prompt_lambda, proxy=True),
+            apigateway.LambdaIntegration(self.generate_lambda, proxy=True),
             authorization_type=apigateway.AuthorizationType.CUSTOM,
             authorizer=self.api_authorizer
         )
@@ -996,8 +850,6 @@ class ChatbotStack(Stack):
         # Lambda 함수 오류율 알람
         lambda_funcs = [
             (self.generate_lambda, "Generate"),
-            (self.project_lambda, "Project"),
-            (self.save_prompt_lambda, "SavePrompt"),
             (self.auth_lambda, "Auth")
         ]
         
@@ -1176,7 +1028,14 @@ class ChatbotStack(Stack):
             }
         )
         
-        # Stream Lambda
+        # WebSocket API 먼저 생성
+        self.websocket_api = apigatewayv2.WebSocketApi(
+            self, "ChatbotWebSocketApi",
+            api_name="chatbot-websocket-api",
+            description="실시간 스트리밍을 위한 WebSocket API"
+        )
+
+        # Stream Lambda (WebSocket API 도메인 정보 포함)
         self.websocket_stream_lambda = lambda_.Function(
             self, "WebSocketStreamFunction",
             runtime=lambda_.Runtime.PYTHON_3_11,
@@ -1185,7 +1044,7 @@ class ChatbotStack(Stack):
             timeout=Duration.minutes(15),
             memory_size=3008,
             role=websocket_lambda_role,
-            layers=[self.enhanced_agents_layer],  # Enhanced Agent System Layer 추가
+            layers=[self.news_processing_layer],  # Enhanced Agent System Layer 추가
             environment={
                 "CONNECTIONS_TABLE": self.websocket_connections_table.table_name,
                 "PROMPT_META_TABLE": self.prompt_meta_table.table_name,
@@ -1193,26 +1052,29 @@ class ChatbotStack(Stack):
                 "REGION": self.region,
                 "CONVERSATIONS_TABLE": "ChatbotConversations",
                 "MESSAGES_TABLE": "ChatbotMessages",
-                "PERPLEXITY_API_KEY": "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"  # 업데이트된 테스트 키
+                "PERPLEXITY_API_KEY": "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",  # 업데이트된 테스트 키
+                "API_GATEWAY_DOMAIN": self.websocket_api.api_endpoint.replace("wss://", "").replace("ws://", ""),
+                "STAGE": "prod",
+                "KNOWLEDGE_BASE_ID": "PGQV3JXPET",
+                "S3_BUCKET_NAME": "seoul-economic-news-data-2025",
+                "NEWS_BUCKET": "seoul-economic-news-data-2025"
             }
         )
         
-        # WebSocket API 생성
-        self.websocket_api = apigatewayv2.WebSocketApi(
-            self, "ChatbotWebSocketApi",
-            api_name="chatbot-websocket-api",
-            description="실시간 스트리밍을 위한 WebSocket API",
-            connect_route_options=apigatewayv2.WebSocketRouteOptions(
-                integration=integrations.WebSocketLambdaIntegration(
-                    "ConnectIntegration",
-                    self.websocket_connect_lambda
-                )
-            ),
-            disconnect_route_options=apigatewayv2.WebSocketRouteOptions(
-                integration=integrations.WebSocketLambdaIntegration(
-                    "DisconnectIntegration", 
-                    self.websocket_disconnect_lambda
-                )
+        # WebSocket API 라우팅 설정 (이미 생성된 API에 라우트 추가)
+        self.websocket_api.add_route(
+            "$connect",
+            integration=integrations.WebSocketLambdaIntegration(
+                "ConnectIntegration",
+                self.websocket_connect_lambda
+            )
+        )
+        
+        self.websocket_api.add_route(
+            "$disconnect",
+            integration=integrations.WebSocketLambdaIntegration(
+                "DisconnectIntegration",
+                self.websocket_disconnect_lambda
             )
         )
         
@@ -1241,6 +1103,33 @@ class ChatbotStack(Stack):
             description="WebSocket API URL with stage",
             export_name="ChatbotWebSocketApiUrl"
         )
+
+    def create_generate_routes(self):
+        """생성 관련 API 경로 생성 - 프로젝트 개념 제거"""
+        generate_resource = self.api.root.add_resource("generate")
+        
+        # POST /generate (일반 생성)
+        generate_resource.add_method(
+            "POST",
+            apigateway.LambdaIntegration(self.generate_lambda, proxy=True),
+            authorization_type=apigateway.AuthorizationType.NONE
+        )
+        
+        # CORS 옵션 추가
+        self._create_cors_options_method(generate_resource, "POST,OPTIONS")
+        
+        # /generate/stream 리소스 (스트리밍)
+        stream_resource = generate_resource.add_resource("stream")
+        
+        # 스트리밍 메서드 추가
+        stream_resource.add_method(
+            "POST",
+            apigateway.LambdaIntegration(self.generate_lambda, proxy=True),
+            authorization_type=apigateway.AuthorizationType.NONE
+        )
+        
+        # CORS 옵션 추가
+        self._create_cors_options_method(stream_resource, "OPTIONS,POST")
 
     # def create_crew_routes(self):
     #     """CrewAI 관련 API 경로 생성 - 기능 제거됨"""

@@ -56,6 +56,7 @@ for suffix in environments:
     conversation_stack = ChatbotConversationStack(
         app, 
         f"ChatbotConversationStack{stack_suffix}",
+        environment_suffix=domain_suffix,  # 환경 구분자 추가
         stack_name=f"ChatbotConversationStack{stack_suffix}",
         description=f"Conversation Management System - {domain_suffix.upper()} Environment",
         env=env,

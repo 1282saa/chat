@@ -26,19 +26,19 @@ class SimplePromptManager:
         self.prompt_meta_table = prompt_meta_table
         self.prompt_table = self.dynamodb.Table(prompt_meta_table)
     
-    def load_project_prompts(self, project_id: str) -> List[Dict[str, Any]]:
-        """프로젝트의 모든 활성화된 프롬프트 카드 로드"""
+    def load_user_prompts(self, user_id: str) -> List[Dict[str, Any]]:
+        """사용자의 모든 활성화된 프롬프트 카드 로드"""
         try:
-            # DynamoDB에서 프로젝트의 활성화된 프롬프트 메타데이터 조회
+            # DynamoDB에서 사용자의 활성화된 프롬프트 메타데이터 조회
             response = self.prompt_table.scan(
-                FilterExpression=boto3.dynamodb.conditions.Attr('projectId').eq(project_id) & 
+                FilterExpression=boto3.dynamodb.conditions.Attr('user_id').eq(user_id) & 
                                boto3.dynamodb.conditions.Attr('isActive').eq(True)
             )
             
             prompt_metas = response.get('Items', [])
             
             if not prompt_metas:
-                logger.info(f"프로젝트 {project_id}에 활성화된 프롬프트 카드가 없습니다.")
+                logger.info(f"사용자 {user_id}에 활성화된 프롬프트 카드가 없습니다.")
                 return []
             
             # S3에서 실제 프롬프트 내용 로드
@@ -46,7 +46,7 @@ class SimplePromptManager:
             for meta in prompt_metas:
                 try:
                     content = self._load_prompt_content(
-                        project_id, 
+                        user_id, 
                         meta['promptId'], 
                         meta.get('s3Key')
                     )
@@ -68,19 +68,19 @@ class SimplePromptManager:
             # createdAt으로 정렬
             prompts.sort(key=lambda x: x.get('createdAt', ''))
             
-            logger.info(f"프로젝트 {project_id}: {len(prompts)}개 프롬프트 로드 완료")
+            logger.info(f"사용자 {user_id}: {len(prompts)}개 프롬프트 로드 완료")
             return prompts
             
         except Exception as e:
-            logger.error(f"프롬프트 로드 오류 (프로젝트: {project_id}): {str(e)}")
+            logger.error(f"프롬프트 로드 오류 (사용자: {user_id}): {str(e)}")
             return []
     
-    def _load_prompt_content(self, project_id: str, prompt_id: str, s3_key: Optional[str] = None) -> str:
+    def _load_prompt_content(self, user_id: str, prompt_id: str, s3_key: Optional[str] = None) -> str:
         """S3에서 개별 프롬프트 내용 로드"""
         try:
             # s3Key가 없으면 기본 경로 사용
             if not s3_key:
-                s3_key = f"prompts/{project_id}/{prompt_id}/content.txt"
+                s3_key = f"prompts/{user_id}/{prompt_id}/content.txt"
             
             response = self.s3_client.get_object(
                 Bucket=self.prompt_bucket,
@@ -132,17 +132,18 @@ class SimplePromptManager:
         logger.info(f"프롬프트 결합 완료: {len(prompts)}개 → {len(combined)}자 (mode: {mode})")
         return combined
     
-    def get_project_prompt_stats(self, project_id: str) -> Dict[str, Any]:
-        """프로젝트의 프롬프트 통계 정보"""
+    def get_user_prompt_stats(self, user_id: str) -> Dict[str, Any]:
+        """사용자 프롬프트 통계 조회"""
         try:
-            prompts = self.load_project_prompts(project_id)
+            # 사용자의 프롬프트 로드
+            prompts = self.load_user_prompts(user_id)
             
             total_count = len(prompts)
             total_length = sum(len(p.get('content', '')) for p in prompts)
             average_length = total_length // total_count if total_count > 0 else 0
             
             return {
-                "project_id": project_id,
+                "user_id": user_id,
                 "total_prompts": total_count,
                 "total_length": total_length,
                 "average_length": average_length,
@@ -159,7 +160,7 @@ class SimplePromptManager:
         except Exception as e:
             logger.error(f"프롬프트 통계 조회 오류: {str(e)}")
             return {
-                "project_id": project_id,
+                "user_id": user_id,
                 "error": str(e),
                 "timestamp": datetime.utcnow().isoformat()
             }

@@ -17,8 +17,12 @@ class ChatbotConversationStack(Stack):
     - API Gateway endpoints
     """
 
-    def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
+    def __init__(self, scope: Construct, construct_id: str, environment_suffix: str = "", **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
+        
+        # 환경별 테이블 이름 접미사
+        self.environment_suffix = environment_suffix
+        self.table_suffix = f"-{environment_suffix}" if environment_suffix else ""
 
         # DynamoDB Tables
         self.conversations_table = self._create_conversations_table()
@@ -34,7 +38,7 @@ class ChatbotConversationStack(Stack):
         """Create Conversations table with GSI for user queries"""
         table = dynamodb.Table(
             self, "ConversationsTable",
-            table_name="ChatbotConversations",
+            table_name=f"ChatbotConversations{self.table_suffix}",  # 환경별 고유 이름
             partition_key=dynamodb.Attribute(
                 name="PK",  # USER#<cognito_sub>
                 type=dynamodb.AttributeType.STRING
@@ -45,19 +49,21 @@ class ChatbotConversationStack(Stack):
             ),
             billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
             removal_policy=RemovalPolicy.RETAIN,
-            point_in_time_recovery=True,
+            point_in_time_recovery_specification=dynamodb.PointInTimeRecoverySpecification(
+                point_in_time_recovery_enabled=True
+            ),
             time_to_live_attribute="ttl"
         )
         
-        # GSI for querying conversations by lastActivityAt
+        # GSI for querying conversations by user
         table.add_global_secondary_index(
-            index_name="GSI1-LastActivity",
+            index_name="UserConversationsIndex",
             partition_key=dynamodb.Attribute(
-                name="GSI1PK",  # USER#<cognito_sub>
+                name="userId",
                 type=dynamodb.AttributeType.STRING
             ),
             sort_key=dynamodb.Attribute(
-                name="lastActivityAt",
+                name="createdAt",
                 type=dynamodb.AttributeType.STRING
             )
         )
@@ -68,7 +74,7 @@ class ChatbotConversationStack(Stack):
         """Create Messages table for storing conversation messages"""
         table = dynamodb.Table(
             self, "MessagesTable", 
-            table_name="ChatbotMessages",
+            table_name=f"ChatbotMessages{self.table_suffix}",  # 환경별 고유 이름
             partition_key=dynamodb.Attribute(
                 name="PK",  # CONV#<uuid>
                 type=dynamodb.AttributeType.STRING
@@ -79,7 +85,9 @@ class ChatbotConversationStack(Stack):
             ),
             billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
             removal_policy=RemovalPolicy.RETAIN,
-            point_in_time_recovery=True,
+            point_in_time_recovery_specification=dynamodb.PointInTimeRecoverySpecification(
+                point_in_time_recovery_enabled=True
+            ),
             time_to_live_attribute="ttl"
         )
         

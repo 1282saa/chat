@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useReducer, useEffect, useMemo } from "react";
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  useEffect,
+  useMemo,
+} from "react";
 import { useAuth } from "./AuthContext";
 import { conversationAPI } from "../services/api";
 
@@ -244,21 +250,61 @@ export const ConversationProvider = ({ children }) => {
   // 사용자 변경시 상태 초기화 및 대화 목록 로드
   useEffect(() => {
     if (user) {
-      console.log("🔍 [DEBUG] ConversationContext - 사용자 로그인, 초기 대화 목록 로드");
-      
+      console.log(
+        "🔍 [DEBUG] ConversationContext - 사용자 로그인, 초기 대화 목록 로드"
+      );
+
       // 초기 대화 목록 로드
       const loadInitialConversations = async () => {
         try {
-          console.log("🔍 [DEBUG] ConversationContext - 초기 대화 목록 로드 시작");
-          const response = await conversationAPI.getConversations();
-          console.log("🔍 [DEBUG] ConversationContext - 초기 대화 목록 로드 완료:", response.conversations?.length);
-          setConversations(response.conversations || []);
+          console.log(
+            "🔍 [DEBUG] ConversationContext - 세션 기반 대화 목록 로드 시작"
+          );
+
+          // 세션 스토리지에서 대화 목록 불러오기
+          const conversations = [];
+          for (let i = 0; i < sessionStorage.length; i++) {
+            const key = sessionStorage.key(i);
+            if (key && key.startsWith("conversation_")) {
+              try {
+                const conversationData = JSON.parse(
+                  sessionStorage.getItem(key)
+                );
+                conversations.push({
+                  id: conversationData.id,
+                  title: conversationData.title,
+                  startedAt: conversationData.startedAt,
+                  lastActivityAt:
+                    conversationData.lastActivityAt ||
+                    conversationData.startedAt,
+                  tokenSum: conversationData.messages?.length || 0,
+                });
+              } catch (parseError) {
+                console.warn("대화 데이터 파싱 실패:", key, parseError);
+              }
+            }
+          }
+
+          // 최근 순으로 정렬
+          conversations.sort(
+            (a, b) => new Date(b.lastActivityAt) - new Date(a.lastActivityAt)
+          );
+
+          console.log(
+            "🔍 [DEBUG] ConversationContext - 세션 기반 대화 목록 로드 완료:",
+            conversations.length
+          );
+          setConversations(conversations);
         } catch (error) {
-          console.error("ConversationContext - 초기 대화 목록 로드 실패:", error);
+          console.error(
+            "ConversationContext - 세션 대화 목록 로드 실패:",
+            error
+          );
           // 실패해도 기본 빈 배열 유지
+          setConversations([]);
         }
       };
-      
+
       loadInitialConversations();
     } else {
       clearState();
@@ -266,38 +312,41 @@ export const ConversationProvider = ({ children }) => {
   }, [user]);
 
   // Context value 최적화 - useMemo로 불필요한 재렌더링 방지
-  const value = useMemo(() => ({
-    // 상태
-    ...state,
+  const value = useMemo(
+    () => ({
+      // 상태
+      ...state,
 
-    // 액션 함수들
-    setCurrentConversation,
-    setConversations,
-    addConversation,
-    updateConversation,
-    setMessages,
-    addMessage,
-    updateMessage,
-    setLoading,
-    setError,
-    toggleDrawer,
-    clearState,
-    getCurrentConversation,
-  }), [
-    state,
-    setCurrentConversation,
-    setConversations,
-    addConversation,
-    updateConversation,
-    setMessages,
-    addMessage,
-    updateMessage,
-    setLoading,
-    setError,
-    toggleDrawer,
-    clearState,
-    getCurrentConversation,
-  ]);
+      // 액션 함수들
+      setCurrentConversation,
+      setConversations,
+      addConversation,
+      updateConversation,
+      setMessages,
+      addMessage,
+      updateMessage,
+      setLoading,
+      setError,
+      toggleDrawer,
+      clearState,
+      getCurrentConversation,
+    }),
+    [
+      state,
+      setCurrentConversation,
+      setConversations,
+      addConversation,
+      updateConversation,
+      setMessages,
+      addMessage,
+      updateMessage,
+      setLoading,
+      setError,
+      toggleDrawer,
+      clearState,
+      getCurrentConversation,
+    ]
+  );
 
   return (
     <ConversationContext.Provider value={value}>

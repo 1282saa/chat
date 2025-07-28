@@ -2,8 +2,9 @@ import { useState, useEffect, useRef, useCallback } from "react";
 
 /**
  * WebSocket 실시간 스트리밍을 위한 커스텀 훅
+ * 사용자별 자동 관리로 변경
  */
-export const useWebSocket = (projectId) => {
+export const useWebSocket = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState(null);
@@ -17,50 +18,54 @@ export const useWebSocket = (projectId) => {
     const wsUrl =
       process.env.REACT_APP_WS_URL ||
       "wss://your-websocket-api.execute-api.us-east-1.amazonaws.com/prod";
-    
+
     // URL 형식 검증 및 정규화
     if (!wsUrl.startsWith("wss://") && !wsUrl.startsWith("ws://")) {
       console.error("잘못된 WebSocket URL 형식:", wsUrl);
       return null;
     }
-    
+
     // 끝에 슬래시 제거
     let normalizedUrl = wsUrl.replace(/\/$/, "");
-    
-    // 개발 모드에서 인증 스킵
-    if (process.env.REACT_APP_SKIP_AUTH === 'true') {
-      console.log("🔓 개발 모드: WebSocket 인증 스킵");
-    } else {
-      // 인증 토큰을 쿼리 파라미터로 추가
-      try {
-        const { fetchAuthSession } = await import('aws-amplify/auth');
-        const session = await fetchAuthSession();
-        const token = session?.tokens?.idToken?.toString();
-        
-        if (token) {
-          // URL에 토큰을 쿼리 파라미터로 추가
-          normalizedUrl += `?token=${encodeURIComponent(token)}`;
-          console.log("✅ WebSocket URL에 인증 토큰 추가됨");
-        } else {
-          console.log("⚠️ 인증 토큰이 없음 - 공개 WebSocket 연결 시도");
-        }
-      } catch (authError) {
-        console.log("📝 인증 토큰 가져오기 실패:", authError.message);
+
+    // 인증 토큰을 쿼리 파라미터로 추가
+    try {
+      const { fetchAuthSession } = await import("aws-amplify/auth");
+      const session = await fetchAuthSession();
+      const token = session?.tokens?.idToken?.toString();
+
+      if (token) {
+        // URL에 토큰을 쿼리 파라미터로 추가
+        normalizedUrl += `?token=${encodeURIComponent(token)}`;
+        console.log("✅ WebSocket URL에 인증 토큰 추가됨");
+      } else {
+        console.log("⚠️ 인증 토큰이 없음 - 공개 WebSocket 연결 시도");
       }
+    } catch (authError) {
+      console.log("📝 인증 토큰 가져오기 실패:", authError.message);
     }
-    
-    console.log("WebSocket URL 확인:", normalizedUrl.replace(/token=[^&]+/, 'token=***'));
+
+    console.log(
+      "WebSocket URL 확인:",
+      normalizedUrl.replace(/token=[^&]+/, "token=***")
+    );
     console.log("환경변수 REACT_APP_WS_URL:", process.env.REACT_APP_WS_URL);
-    
+
     return normalizedUrl;
   }, []);
 
   // WebSocket 연결
   const connect = useCallback(async () => {
     // 이미 연결 중이거나 연결된 경우 중복 연결 방지
-    if (wsRef.current?.readyState === WebSocket.OPEN || 
-        wsRef.current?.readyState === WebSocket.CONNECTING) {
-      console.log("이미 연결된 WebSocket이 있습니다 (readyState:", wsRef.current.readyState, ")");
+    if (
+      wsRef.current?.readyState === WebSocket.OPEN ||
+      wsRef.current?.readyState === WebSocket.CONNECTING
+    ) {
+      console.log(
+        "이미 연결된 WebSocket이 있습니다 (readyState:",
+        wsRef.current.readyState,
+        ")"
+      );
       return;
     }
 
@@ -75,7 +80,7 @@ export const useWebSocket = (projectId) => {
 
     try {
       const wsUrl = await getWebSocketUrl();
-      
+
       if (!wsUrl) {
         setError("유효하지 않은 WebSocket URL");
         setIsConnecting(false);
@@ -116,23 +121,23 @@ export const useWebSocket = (projectId) => {
       wsRef.current.onclose = (event) => {
         clearTimeout(connectionTimeout);
         const connectionDuration = Date.now() - (window.wsConnectStart || 0);
-        
+
         console.log("🔴 WebSocket 연결 종료:");
         console.log("- Code:", event.code);
         console.log("- Reason:", event.reason || "(no reason provided)");
         console.log("- WasClean:", event.wasClean);
         console.log("- Connection duration:", connectionDuration + "ms");
-        
+
         setIsConnected(false);
         setIsConnecting(false);
 
         // 즉시 종료된 경우 (500ms 이내) - 서버 문제
         if (connectionDuration < 500) {
           console.error("⚠️ WebSocket이 즉시 종료됨 - 서버 문제 가능성");
-          
+
           // 특정 에러 코드에 따른 세분화된 에러 메시지
           let errorMessage = "서버 연결에 실패했습니다.";
-          switch(event.code) {
+          switch (event.code) {
             case 1006:
               errorMessage = "비정상적인 연결 종료 (네트워크 문제 가능성)";
               break;
@@ -161,7 +166,7 @@ export const useWebSocket = (projectId) => {
               errorMessage = "TLS 연결 실패";
               break;
           }
-          
+
           setError(errorMessage);
           return;
         }
@@ -198,7 +203,6 @@ export const useWebSocket = (projectId) => {
         setError("WebSocket 연결 오류가 발생했습니다");
         setIsConnecting(false);
       };
-
     } catch (err) {
       console.error("💥 WebSocket 생성 실패:", err);
       setError("WebSocket 연결에 실패했습니다: " + err.message);
@@ -237,7 +241,14 @@ export const useWebSocket = (projectId) => {
 
   // 스트리밍 요청
   const startStreaming = useCallback(
-    (userInput, chatHistory = [], promptCards = [], modelId = null, conversationId = null, userSub = null) => {
+    (
+      userInput,
+      chatHistory = [],
+      promptCards = [],
+      modelId = null,
+      conversationId = null,
+      userSub = null
+    ) => {
       if (!isConnected) {
         setError("WebSocket 연결이 필요합니다");
         return false;
@@ -245,7 +256,7 @@ export const useWebSocket = (projectId) => {
 
       const message = {
         action: "stream",
-        projectId,
+        projectId: userSub, // 사용자 ID를 projectId로 사용
         userInput,
         chat_history: chatHistory,
         prompt_cards: promptCards,
@@ -255,7 +266,7 @@ export const useWebSocket = (projectId) => {
         useKnowledgeBase: true, // Enhanced Agent System 활성화
       };
 
-      console.log('🔍 [DEBUG] WebSocket 메시지 전송 상세:', {
+      console.log("🔍 [DEBUG] WebSocket 메시지 전송 상세:", {
         action: message.action,
         projectId: message.projectId,
         inputLength: userInput.length,
@@ -267,12 +278,12 @@ export const useWebSocket = (projectId) => {
         isConversationIdNull: message.conversationId === null,
         isConversationIdUndefined: message.conversationId === undefined,
         userSub: message.userSub,
-        fullMessage: JSON.stringify(message)
+        fullMessage: JSON.stringify(message),
       });
 
       return sendMessage(message);
     },
-    [isConnected, projectId, sendMessage]
+    [isConnected, sendMessage]
   );
 
   // 메시지 리스너 등록
@@ -295,23 +306,14 @@ export const useWebSocket = (projectId) => {
     const timer = setTimeout(() => {
       connect();
     }, 100);
-    
+
     return () => {
       clearTimeout(timer);
       disconnect();
     };
   }, []); // 의존성 배열을 빈 배열로 변경
 
-  // projectId 변경 시 재연결 (이전 값과 비교하여 실제 변경시에만)
-  const prevProjectIdRef = useRef(projectId);
-  useEffect(() => {
-    if (prevProjectIdRef.current !== projectId && isConnected && projectId) {
-      console.log('ProjectId 변경됨, 재연결 중:', prevProjectIdRef.current, '->', projectId);
-      disconnect();
-      setTimeout(connect, 200);
-    }
-    prevProjectIdRef.current = projectId;
-  }, [projectId, isConnected]); // connect, disconnect 의존성 제거
+  // 사용자 인증 상태 변경 시 재연결 처리는 connect 함수에서 자동으로 처리됨
 
   return {
     isConnected,
