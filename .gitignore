@@ -163,6 +163,10 @@ lambda/*/*.zip
 cdk/cdk.out/
 cdk.out/
 
+# CDK asset files (large build artifacts)
+cdk/cdk.out/asset.*.zip
+**/asset.*.zip
+
 # Dependency lock files (keep package.json and requirements.txt only)
 package-lock.json
 yarn.lock
