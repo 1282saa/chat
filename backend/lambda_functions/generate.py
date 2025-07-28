@@ -6,8 +6,8 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 
 # AWS 클라이언트 초기화
-bedrock_client = boto3.client('bedrock-runtime', region_name='us-east-1')
-dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+bedrock_client = boto3.client('bedrock-runtime', region_name='ap-northeast-2')
+dynamodb = boto3.resource('dynamodb', region_name='ap-northeast-2')
 
 # 모델 설정
 MODEL_ID = "anthropic.claude-3-sonnet-20240229-v1:0"
@@ -294,7 +294,7 @@ def load_prompt_cards(project_id: str) -> list:
     프로젝트의 프롬프트 카드 로드
     """
     try:
-        table = dynamodb.Table('BedrockDiyPrompts')
+        table = dynamodb.Table('ChatbotPrompts')
         
         response = table.query(
             KeyConditionExpression=boto3.dynamodb.conditions.Key('projectId').eq(project_id),

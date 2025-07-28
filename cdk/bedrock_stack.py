@@ -26,7 +26,7 @@ from aws_cdk import (
 from constructs import Construct
 import json
 
-class BedrockDiyStack(Stack):
+class ChatbotStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
@@ -70,8 +70,8 @@ class BedrockDiyStack(Stack):
         """Cognito 사용자 풀 생성"""
         # 사용자 풀 생성
         self.user_pool = cognito.UserPool(
-            self, "BedrockDiyUserPool",
-            user_pool_name="title-generator-users",
+            self, "ChatbotUserPool",
+            user_pool_name="chatbot-users",
             self_sign_up_enabled=True,
             sign_in_aliases=cognito.SignInAliases(
                 email=True,
@@ -101,8 +101,8 @@ class BedrockDiyStack(Stack):
 
         # 사용자 풀 클라이언트 생성
         self.user_pool_client = self.user_pool.add_client(
-            "BedrockDiyWebClient",
-            user_pool_client_name="title-generator-web-client",
+            "ChatbotWebClient",
+            user_pool_client_name="chatbot-web-client",
             auth_flows=cognito.AuthFlow(
                 user_password=True,
                 user_srp=True
@@ -117,9 +117,9 @@ class BedrockDiyStack(Stack):
 
         # 사용자 풀 도메인 생성 (선택사항 - Hosted UI를 사용할 경우)
         self.user_pool_domain = self.user_pool.add_domain(
-            "BedrockDiyDomain",
+            "ChatbotDomain",
             cognito_domain=cognito.CognitoDomainOptions(
-                domain_prefix=f"title-generator-{self.account}"
+                domain_prefix=f"chatbot-{self.account}"
             )
         )
 
@@ -137,7 +137,7 @@ class BedrockDiyStack(Stack):
         # 프롬프트 저장용 버킷
         self.prompt_bucket = s3.Bucket(
             self, "PromptBucket",
-            bucket_name=f"title-generator-prompts-{self.account}-{self.region}",
+            bucket_name=f"chatbot-prompts-{self.account}-{self.region}",
             removal_policy=RemovalPolicy.DESTROY,
             auto_delete_objects=True,
             versioned=True,
@@ -155,7 +155,7 @@ class BedrockDiyStack(Stack):
         # 기사 업로드용 버킷
         self.article_bucket = s3.Bucket(
             self, "ArticleBucket",
-            bucket_name=f"title-generator-articles-{self.account}-{self.region}",
+            bucket_name=f"chatbot-data-{self.account}-{self.region}",
             removal_policy=RemovalPolicy.DESTROY,
             auto_delete_objects=True,
             versioned=True,
@@ -180,7 +180,7 @@ class BedrockDiyStack(Stack):
         # 1. 사용자 계정 테이블
         self.users_table = dynamodb.Table(
             self, "UsersTable",
-            table_name="title-generator-users",
+            table_name="chatbot-users",
             partition_key=dynamodb.Attribute(
                 name="user_id",  # Cognito User Sub
                 type=dynamodb.AttributeType.STRING
@@ -205,7 +205,7 @@ class BedrockDiyStack(Stack):
         # 2. 사용량 관리 테이블
         self.usage_table = dynamodb.Table(
             self, "UsageTable",
-            table_name="title-generator-usage",
+            table_name="chatbot-usage",
             partition_key=dynamodb.Attribute(
                 name="user_id",
                 type=dynamodb.AttributeType.STRING
@@ -236,7 +236,7 @@ class BedrockDiyStack(Stack):
         # 3. 구독 정보 테이블
         self.subscriptions_table = dynamodb.Table(
             self, "SubscriptionsTable",
-            table_name="title-generator-subscriptions",
+            table_name="chatbot-subscriptions",
             partition_key=dynamodb.Attribute(
                 name="user_id",
                 type=dynamodb.AttributeType.STRING
@@ -269,7 +269,7 @@ class BedrockDiyStack(Stack):
         # 프로젝트 메타데이터 테이블
         self.project_table = dynamodb.Table(
             self, "ProjectTable",
-            table_name="title-generator-projects-auth",
+            table_name="chatbot-projects",
             partition_key=dynamodb.Attribute(
                 name="projectId",
                 type=dynamodb.AttributeType.STRING
@@ -284,7 +284,7 @@ class BedrockDiyStack(Stack):
         # 프롬프트 메타데이터 테이블 (확장)
         self.prompt_meta_table = dynamodb.Table(
             self, "PromptMetaTable",
-            table_name="title-generator-prompt-meta-v2-auth",
+            table_name="chatbot-prompts",
             partition_key=dynamodb.Attribute(
                 name="projectId",
                 type=dynamodb.AttributeType.STRING
@@ -314,7 +314,7 @@ class BedrockDiyStack(Stack):
         # 대화/생성 기록 테이블
         self.conversation_table = dynamodb.Table(
             self, "ConversationTable",
-            table_name="title-generator-conversations-auth",
+            table_name="chatbot-conversations",
             partition_key=dynamodb.Attribute(
                 name="projectId",
                 type=dynamodb.AttributeType.STRING
@@ -330,7 +330,7 @@ class BedrockDiyStack(Stack):
         # Step Functions 실행 결과 테이블
         self.execution_table = dynamodb.Table(
             self, "ExecutionTable",
-            table_name="title-generator-executions-auth",
+            table_name="chatbot-executions",
             partition_key=dynamodb.Attribute(
                 name="executionId",
                 type=dynamodb.AttributeType.STRING
@@ -341,74 +341,45 @@ class BedrockDiyStack(Stack):
         )
 
         # =============================================================================
-        # CrewAI 구조를 위한 새로운 테이블들
+        # Enhanced Agent System용 새로운 테이블들
         # =============================================================================
-
-        # 프롬프트 인스턴스 테이블 (사용자가 입력한 placeholder 값들)
-        self.prompt_instance_table = dynamodb.Table(
-            self, "PromptInstanceTable",
-            table_name="title-generator-prompt-instances-auth",
+        
+        # Perplexity API 검색 결과 캐싱 테이블
+        self.perplexity_cache_table = dynamodb.Table(
+            self, "PerplexityCacheTable",
+            table_name="perplexity-search-cache",
             partition_key=dynamodb.Attribute(
-                name="projectId",
-                type=dynamodb.AttributeType.STRING
-            ),
-            sort_key=dynamodb.Attribute(
-                name="instanceId",  # UUID 기반
+                name="query_hash",
                 type=dynamodb.AttributeType.STRING
             ),
             billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
             removal_policy=RemovalPolicy.DESTROY,
-            stream=dynamodb.StreamViewType.NEW_AND_OLD_IMAGES  # DynamoDB Streams 활성화
+            time_to_live_attribute="ttl"  # 자동 캐시 만료
         )
-
-        # 사용자별 인스턴스 조회를 위한 GSI
-        self.prompt_instance_table.add_global_secondary_index(
-            index_name="userId-created-index",
+        
+        # 워크플로우 실행 메트릭 테이블
+        self.execution_metrics_table = dynamodb.Table(
+            self, "ExecutionMetricsTable",
+            table_name="workflow-execution-metrics",
             partition_key=dynamodb.Attribute(
-                name="userId",
+                name="execution_date",  # YYYY-MM-DD 형식
                 type=dynamodb.AttributeType.STRING
             ),
             sort_key=dynamodb.Attribute(
-                name="createdAt",
-                type=dynamodb.AttributeType.STRING
-            ),
-            projection_type=dynamodb.ProjectionType.ALL
-        )
-
-        # CrewAI 설정 저장 테이블
-        self.crew_config_table = dynamodb.Table(
-            self, "CrewConfigTable",
-            table_name="title-generator-crew-configs-auth",
-            partition_key=dynamodb.Attribute(
-                name="configId",  # projectId 기반 생성
+                name="execution_id",
                 type=dynamodb.AttributeType.STRING
             ),
             billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
             removal_policy=RemovalPolicy.DESTROY,
-            point_in_time_recovery_specification=dynamodb.PointInTimeRecoverySpecification(
-                point_in_time_recovery_enabled=True
-            )
+            time_to_live_attribute="ttl"  # 90일 후 자동 삭제
         )
 
-        # 프로젝트별 조회를 위한 GSI
-        self.crew_config_table.add_global_secondary_index(
-            index_name="projectId-version-index",
-            partition_key=dynamodb.Attribute(
-                name="projectId",
-                type=dynamodb.AttributeType.STRING
-            ),
-            sort_key=dynamodb.Attribute(
-                name="version",
-                type=dynamodb.AttributeType.NUMBER
-            ),
-            projection_type=dynamodb.ProjectionType.ALL
-        )
 
     def create_sqs_dlq(self):
         """SQS DLQ 생성"""
         self.dlq = sqs.Queue(
             self, "IndexPromptDLQ",
-            queue_name="title-generator-index-prompt-dlq-auth",
+            queue_name="chatbot-index-prompt-dlq",
             retention_period=Duration.days(14),
             visibility_timeout=Duration.minutes(5)
         )
@@ -416,7 +387,7 @@ class BedrockDiyStack(Stack):
         # 메인 큐 (S3 이벤트 재시도용)
         self.index_queue = sqs.Queue(
             self, "IndexPromptQueue", 
-            queue_name="title-generator-index-prompt-auth",
+            queue_name="chatbot-index-prompt",
             visibility_timeout=Duration.minutes(5),
             dead_letter_queue=sqs.DeadLetterQueue(
                 max_receive_count=3,
@@ -428,12 +399,12 @@ class BedrockDiyStack(Stack):
         """SNS 토픽 생성"""
         self.completion_topic = sns.Topic(
             self, "CompletionTopic",
-            topic_name="title-generator-completion-auth"
+            topic_name="chatbot-completion"
         )
 
         self.error_topic = sns.Topic(
             self, "ErrorTopic", 
-            topic_name="title-generator-errors-auth"
+            topic_name="chatbot-errors"
         )
 
     def create_bedrock_guardrail(self):
@@ -476,7 +447,7 @@ class BedrockDiyStack(Stack):
             self, "DynamicPromptAgent",
             agent_name=f"dynamic-prompt-agent-{int(time.time())}",
             description="동적 프롬프트 시스템 AI 어시스턴트",
-            foundation_model="anthropic.claude-3-sonnet-20240229-v1:0",
+            foundation_model="apac.anthropic.claude-3-sonnet-20240229-v1:0",
             agent_resource_role_arn=self.agent_role.role_arn,
             idle_session_ttl_in_seconds=1800,  # 30분
             instruction="당신은 동적 프롬프트 시스템의 AI 어시스턴트입니다. 사용자가 제공하는 프롬프트 카드의 내용에 따라 다양한 작업을 수행하며, 창의적이고 정확한 응답을 제공합니다. 항상 한국어로 응답하고, 사용자의 요청에 맞춰 유연하게 대응하세요."
@@ -509,6 +480,7 @@ class BedrockDiyStack(Stack):
                     "s3:GetObject",
                     "s3:PutObject", 
                     "s3:DeleteObject",
+                    "s3:ListBucket",
                     "dynamodb:Query",
                     "dynamodb:PutItem",
                     "dynamodb:UpdateItem",
@@ -524,6 +496,8 @@ class BedrockDiyStack(Stack):
                     "sns:Publish",
                     "bedrock:InvokeModel",
                     "bedrock:InvokeModelWithResponseStream",
+                    "bedrock:Retrieve",
+                    "bedrock:RetrieveAndGenerate",
                     "cognito-idp:AdminCreateUser",
                     "cognito-idp:AdminSetUserPassword",
                     "cognito-idp:AdminGetUser",
@@ -543,6 +517,8 @@ class BedrockDiyStack(Stack):
                     self.prompt_bucket.bucket_arn + "/*",
                     self.article_bucket.bucket_arn,
                     self.article_bucket.bucket_arn + "/*",
+                    "arn:aws:s3:::seoul-economic-news-data-2025",
+                    "arn:aws:s3:::seoul-economic-news-data-2025/*",
                     # 기존 테이블들
                     self.project_table.table_arn,
                     self.prompt_meta_table.table_arn,
@@ -556,11 +532,12 @@ class BedrockDiyStack(Stack):
                     self.usage_table.table_arn + "/index/user_id-month-index",
                     self.subscriptions_table.table_arn,
                     self.subscriptions_table.table_arn + "/index/status-expiry_date-index",
-                    # CrewAI 구조를 위한 새로운 테이블들
-                    self.prompt_instance_table.table_arn,
-                    self.prompt_instance_table.table_arn + "/index/userId-created-index",
-                    self.crew_config_table.table_arn,
-                    self.crew_config_table.table_arn + "/index/projectId-version-index",
+                    # Prompt 메타 테이블
+                    self.prompt_meta_table.table_arn,
+                    self.prompt_meta_table.table_arn + "/index/projectId-stepOrder-index",
+                    # Enhanced Agent System용 새로운 테이블들
+                    self.perplexity_cache_table.table_arn,
+                    self.execution_metrics_table.table_arn,
                     # SQS, SNS
                     self.dlq.queue_arn,
                     self.index_queue.queue_arn,
@@ -573,7 +550,33 @@ class BedrockDiyStack(Stack):
             )
         )
 
-        # 1. 제목 생성 Lambda (핵심 기능) - 최대 성능 설정 + 스트리밍 활성화
+        # Enhanced Agent System을 위한 Lambda Layer 생성
+        self.enhanced_agents_layer = lambda_.LayerVersion(
+            self, "EnhancedAgentsLayer",
+            code=lambda_.Code.from_asset("../lambda", 
+                bundling=BundlingOptions(
+                    image=lambda_.Runtime.PYTHON_3_11.bundling_image,
+                    command=[
+                        "bash", "-c",
+                        "mkdir -p /asset-output/python && "
+                        "cp -r /asset-input/smart_router /asset-output/python/ && "
+                        "cp -r /asset-input/react_planning /asset-output/python/ && "
+                        "cp -r /asset-input/date_intelligence /asset-output/python/ && "
+                        "cp -r /asset-input/external_search /asset-output/python/ && "
+                        "cp -r /asset-input/workflow_engine /asset-output/python/ && "
+                        "cp -r /asset-input/agents /asset-output/python/ && "
+                        "cp -r /asset-input/utils /asset-output/python/ && "
+                        "pip install -r /asset-input/lambda_layers/langchain/requirements.txt -t /asset-output/python/ && "
+                        "echo 'Enhanced Agent System Layer 강제 업데이트 완료 - 2025-01-28-10-30' && "
+                        "ls -la /asset-output/python/"
+                    ]
+                )
+            ),
+            compatible_runtimes=[lambda_.Runtime.PYTHON_3_11],
+            description="Enhanced Agent System for intelligent news processing - Force Update 2025-01-28"
+        )
+
+        # 1. Lambda (핵심 기능) - Enhanced Agent System 적용
         self.generate_lambda = lambda_.Function(
             self, "GenerateFunction",
             runtime=lambda_.Runtime.PYTHON_3_11,
@@ -583,11 +586,25 @@ class BedrockDiyStack(Stack):
             timeout=Duration.minutes(15),
             memory_size=3008,
             role=lambda_role,
+            layers=[self.enhanced_agents_layer],  # 새로운 Layer 추가
             environment={
                 "PROMPT_META_TABLE": self.prompt_meta_table.table_name,
                 "PROMPT_BUCKET": self.prompt_bucket.bucket_name,
                 "EXECUTION_TABLE": self.execution_table.table_name,
+                "KNOWLEDGE_BASE_ID": "PGQV3JXPET",
+                "OPENSEARCH_COLLECTION_ID": "i56h0ibud5e0sd0hz7ch",
+                "S3_BUCKET_NAME": "seoul-economic-news-data-2025",
+                "S3_DATA_PREFIX": "news-data-md/",
+                "NEWS_BUCKET": "seoul-economic-news-data-2025",  # 새로운 에이전트용
+                "PERPLEXITY_API_KEY": "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",  # 업데이트된 테스트 키
+                "PERPLEXITY_CACHE_TABLE": "perplexity-search-cache",  # 캐싱용 테이블
+                "EXECUTION_METRICS_TABLE": "workflow-execution-metrics",  # 메트릭용 테이블
                 "REGION": self.region,
+                # APAC Claude 모델 설정
+                "SYNTHESIZER_MODEL_TIER": "fast",        # fast/balanced/advanced/high_performance/premium/latest
+                "REACT_MODEL_TIER": "fast",              # ReAct 계획에는 빠른 응답 우선
+                "SYNTHESIS_PRIORITY": "balance",         # speed/balance/quality
+                "APAC_MODELS_ENABLED": "true",           # APAC 모델 사용 활성화
             },
             dead_letter_queue=self.dlq
         )
@@ -684,60 +701,6 @@ class BedrockDiyStack(Stack):
             }
         )
 
-        # =============================================================================
-        # CrewAI 구조를 위한 새로운 Lambda 함수들
-        # =============================================================================
-
-        # 7. CrewAI 설정 빌더 Lambda (DynamoDB Streams 트리거)
-        self.crew_builder_lambda = lambda_.Function(
-            self, "CrewBuilderFunction",
-            runtime=lambda_.Runtime.PYTHON_3_11,
-            handler="crew_builder.lambda_handler",
-            code=lambda_.Code.from_asset("../lambda/crew_builder"),
-            timeout=Duration.minutes(5),
-            memory_size=1024,
-            role=lambda_role,
-            environment={
-                "PROMPT_META_TABLE": self.prompt_meta_table.table_name,
-                "PROMPT_INSTANCE_TABLE": self.prompt_instance_table.table_name,
-                "CREW_CONFIG_TABLE": self.crew_config_table.table_name,
-                "CREW_CONFIG_BUCKET": self.prompt_bucket.bucket_name,
-                "REGION": self.region,
-                "LOG_LEVEL": "INFO",
-            }
-        )
-
-        # 8. CrewAI 플래너 Lambda (실제 AI 작업 수행)
-        self.planner_lambda = lambda_.Function(
-            self, "PlannerFunction",
-            runtime=lambda_.Runtime.PYTHON_3_11,
-            handler="planner.lambda_handler",
-            code=lambda_.Code.from_asset("../lambda/planner"),
-            timeout=Duration.minutes(10),
-            memory_size=2048,
-            role=lambda_role,
-            environment={
-                "CREW_CONFIG_BUCKET": self.prompt_bucket.bucket_name,
-                "CREW_CONFIG_TABLE": self.crew_config_table.table_name,
-                "CONVERSATION_TABLE": self.conversation_table.table_name,
-                "BEDROCK_MODEL_ID": "anthropic.claude-3-5-sonnet-20241022-v2:0",
-                "REGION": self.region,
-                "LOG_LEVEL": "INFO",
-            }
-        )
-
-        # DynamoDB Streams 이벤트 소스 매핑
-        # prompt_instance_table의 변경사항을 crew_builder_lambda가 감지하도록 설정
-        self.prompt_instance_table.grant_stream_read(self.crew_builder_lambda)
-        lambda_.EventSourceMapping(
-            self, "PromptInstanceStreamMapping",
-            target=self.crew_builder_lambda,
-            event_source_arn=self.prompt_instance_table.table_stream_arn,
-            starting_position=lambda_.StartingPosition.TRIM_HORIZON,
-            batch_size=5,
-            max_batching_window=Duration.seconds(30),
-            retry_attempts=3
-        )
 
     # 간소화된 CORS 설정 함수
     def _create_cors_options_method(self, resource, allowed_methods):
@@ -772,18 +735,18 @@ class BedrockDiyStack(Stack):
         """API Gateway 생성 - 간소화된 버전"""
         # REST API 생성
         self.api = apigateway.RestApi(
-            self, "BedrockDiyApi",
-            rest_api_name="title-generator-api",
+            self, "ChatbotApi",
+            rest_api_name="chatbot-api",
             description="동적 프롬프트 시스템 - 완전한 빈깡통 AI",
             retain_deployments=True
         )
 
         # JWT Lambda Authorizer 생성
         self.api_authorizer = apigateway.RequestAuthorizer(
-            self, "BedrockDiyApiAuthorizer",
+            self, "ChatbotApiAuthorizer",
             handler=self.jwt_authorizer_lambda,
             identity_sources=[apigateway.IdentitySource.header('Authorization')],
-            authorizer_name="title-generator-jwt-authorizer",
+            authorizer_name="chatbot-jwt-authorizer",
             results_cache_ttl=Duration.seconds(300)  # 5분 캐시
         )
 
@@ -800,7 +763,7 @@ class BedrockDiyStack(Stack):
         self.create_prompt_routes()
         
         # CrewAI 관련 경로 생성
-        self.create_crew_routes()
+        # self.create_crew_routes()  # CrewAI 기능 제거됨
         
         # 스트리밍 엔드포인트 추가
         projects_resource = self.api.root.get_resource("projects")
@@ -1099,14 +1062,14 @@ class BedrockDiyStack(Stack):
             self, "ApiGatewayUrl",
             value=self.api.url,
             description="API Gateway URL",
-            export_name="TitleGeneratorApiUrl"
+            export_name="ChatbotApiUrl"
         )
 
         CfnOutput(
             self, "PromptBucketName",
             value=self.prompt_bucket.bucket_name,
             description="프롬프트 S3 버킷 이름",
-            export_name="TitleGeneratorPromptBucketName"
+            export_name="ChatbotPromptBucketName"
         )
 
         # 🔧 추가: 중요한 리소스 출력값들 추가
@@ -1114,14 +1077,14 @@ class BedrockDiyStack(Stack):
             self, "UserPoolId",
             value=self.user_pool.user_pool_id,
             description="Cognito User Pool ID",
-            export_name="TitleGeneratorUserPoolId"
+            export_name="ChatbotUserPoolId"
         )
 
         CfnOutput(
             self, "UserPoolClientId", 
             value=self.user_pool_client.user_pool_client_id,
             description="Cognito User Pool Client ID",
-            export_name="TitleGeneratorUserPoolClientId"
+            export_name="ChatbotUserPoolClientId"
         )
 
     def create_websocket_api(self):
@@ -1130,7 +1093,7 @@ class BedrockDiyStack(Stack):
         # WebSocket 연결 테이블
         self.websocket_connections_table = dynamodb.Table(
             self, "WebSocketConnectionsTable",
-            table_name="title-generator-websocket-connections",
+            table_name="chatbot-websocket-connections",
             partition_key=dynamodb.Attribute(
                 name="connectionId",
                 type=dynamodb.AttributeType.STRING
@@ -1161,9 +1124,12 @@ class BedrockDiyStack(Stack):
                     "dynamodb:Query",
                     "dynamodb:Scan",
                     "dynamodb:BatchWriteItem",
+                    "dynamodb:UpdateItem",
                     "s3:GetObject",
                     "bedrock:InvokeModel",
-                    "bedrock:InvokeModelWithResponseStream"
+                    "bedrock:InvokeModelWithResponseStream",
+                    "bedrock:Retrieve",
+                    "bedrock-agent:Retrieve"
                 ],
                 resources=[
                     f"arn:aws:execute-api:{self.region}:{self.account}:*/*/*",
@@ -1171,7 +1137,11 @@ class BedrockDiyStack(Stack):
                     self.prompt_meta_table.table_arn,
                     self.prompt_bucket.bucket_arn + "/*",
                     f"arn:aws:dynamodb:{self.region}:{self.account}:table/Conversations",
-                    f"arn:aws:dynamodb:{self.region}:{self.account}:table/Messages"
+                    f"arn:aws:dynamodb:{self.region}:{self.account}:table/Messages",
+                    f"arn:aws:dynamodb:{self.region}:{self.account}:table/ChatbotConversations",
+                    f"arn:aws:dynamodb:{self.region}:{self.account}:table/ChatbotMessages",
+                    f"arn:aws:dynamodb:{self.region}:{self.account}:table/perplexity-search-cache",  # Enhanced Agent System용
+                    f"arn:aws:bedrock:{self.region}::foundation-model/*"
                 ]
             )
         )
@@ -1215,20 +1185,22 @@ class BedrockDiyStack(Stack):
             timeout=Duration.minutes(15),
             memory_size=3008,
             role=websocket_lambda_role,
+            layers=[self.enhanced_agents_layer],  # Enhanced Agent System Layer 추가
             environment={
                 "CONNECTIONS_TABLE": self.websocket_connections_table.table_name,
                 "PROMPT_META_TABLE": self.prompt_meta_table.table_name,
                 "PROMPT_BUCKET": self.prompt_bucket.bucket_name,
                 "REGION": self.region,
-                "CONVERSATIONS_TABLE": "Conversations",
-                "MESSAGES_TABLE": "Messages"
+                "CONVERSATIONS_TABLE": "ChatbotConversations",
+                "MESSAGES_TABLE": "ChatbotMessages",
+                "PERPLEXITY_API_KEY": "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"  # 업데이트된 테스트 키
             }
         )
         
         # WebSocket API 생성
         self.websocket_api = apigatewayv2.WebSocketApi(
-            self, "BedrockDiyWebSocketApi",
-            api_name="title-generator-websocket-api",
+            self, "ChatbotWebSocketApi",
+            api_name="chatbot-websocket-api",
             description="실시간 스트리밍을 위한 WebSocket API",
             connect_route_options=apigatewayv2.WebSocketRouteOptions(
                 integration=integrations.WebSocketLambdaIntegration(
@@ -1267,56 +1239,9 @@ class BedrockDiyStack(Stack):
             self, "WebSocketApiUrl",
             value=websocket_url,
             description="WebSocket API URL with stage",
-            export_name="TitleGeneratorWebSocketApiUrl"
+            export_name="ChatbotWebSocketApiUrl"
         )
 
-    def create_crew_routes(self):
-        """CrewAI 관련 API 경로 생성"""
-        crew_resource = self.api.root.add_resource("crew")
-        
-        # POST /crew/execute (CrewAI 워크플로우 실행)
-        execute_resource = crew_resource.add_resource("execute")
-        execute_resource.add_method(
-            "POST",
-            apigateway.LambdaIntegration(self.planner_lambda, proxy=True),
-            authorization_type=apigateway.AuthorizationType.CUSTOM,
-            authorizer=self.api_authorizer
-        )
-        
-        # CORS 옵션 추가
-        self._create_cors_options_method(execute_resource, "POST,OPTIONS")
-        
-        # GET /crew/config/{projectId} (CrewAI 설정 조회)
-        config_resource = crew_resource.add_resource("config")
-        project_config_resource = config_resource.add_resource("{projectId}")
-        project_config_resource.add_method(
-            "GET",
-            apigateway.LambdaIntegration(self.crew_builder_lambda, proxy=True),
-            authorization_type=apigateway.AuthorizationType.CUSTOM,
-            authorizer=self.api_authorizer
-        )
-        
-        # CORS 옵션 추가
-        self._create_cors_options_method(project_config_resource, "GET,OPTIONS")
-        
-        # POST /crew/instances (프롬프트 인스턴스 생성)
-        instances_resource = crew_resource.add_resource("instances")
-        instances_resource.add_method(
-            "POST",
-            apigateway.LambdaIntegration(self.save_prompt_lambda, proxy=True),
-            authorization_type=apigateway.AuthorizationType.CUSTOM,
-            authorizer=self.api_authorizer
-        )
-        
-        # GET /crew/instances/{projectId} (프로젝트의 인스턴스 목록)
-        project_instances_resource = instances_resource.add_resource("{projectId}")
-        project_instances_resource.add_method(
-            "GET",
-            apigateway.LambdaIntegration(self.save_prompt_lambda, proxy=True),
-            authorization_type=apigateway.AuthorizationType.CUSTOM,
-            authorizer=self.api_authorizer
-        )
-        
-        # CORS 옵션 추가
-        self._create_cors_options_method(instances_resource, "GET,POST,OPTIONS")
-        self._create_cors_options_method(project_instances_resource, "GET,OPTIONS") 
+    # def create_crew_routes(self):
+    #     """CrewAI 관련 API 경로 생성 - 기능 제거됨"""
+    #     pass 

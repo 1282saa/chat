@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class SimplePromptManager:
     """단순하고 효율적인 프롬프트 관리"""
     
-    def __init__(self, prompt_bucket: str, prompt_meta_table: str, region: str = 'us-east-1'):
+    def __init__(self, prompt_bucket: str, prompt_meta_table: str, region: str = 'ap-northeast-2'):
         # Boto3 클라이언트를 매번 새로 생성하여 세션 재사용 문제를 방지합니다.
         session = boto3.session.Session()
         self.s3_client = session.client('s3', region_name=region)

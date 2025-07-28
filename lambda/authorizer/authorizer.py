@@ -22,7 +22,7 @@ logger.setLevel(os.environ.get("LOG_LEVEL", "INFO"))
 # Environment variables
 USER_POOL_ID = os.environ.get("USER_POOL_ID")
 USER_POOL_CLIENT_ID = os.environ.get("USER_POOL_CLIENT_ID")
-AWS_REGION = os.environ.get("REGION", "us-east-1")
+AWS_REGION = os.environ.get("REGION", "ap-northeast-2")
 
 # Cognito settings
 COGNITO_DOMAIN = f"https://cognito-idp.{AWS_REGION}.amazonaws.com/{USER_POOL_ID}"
@@ -187,7 +187,7 @@ if __name__ == "__main__":
     # Test handler locally
     test_event = {
         "type": "REQUEST",
-        "methodArn": "arn:aws:execute-api:us-east-1:123456789012:abcdef123/prod/POST/chat",
+        "methodArn": "arn:aws:execute-api:ap-northeast-2:123456789012:abcdef123/prod/POST/chat",
         "headers": {
             "Authorization": "Bearer eyJhbGciOiJSUzI1NiJ9..."  # Replace with actual token
         }

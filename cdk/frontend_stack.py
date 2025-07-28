@@ -19,25 +19,25 @@ from constructs import Construct
 import os
 import urllib.parse
 
-class FrontendStack(Stack):
+class NewsSummarizerFrontendStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, api_gateway_url: str | None = None, rest_api: apigateway.RestApi | None = None, domain_name: str | None = None, environment: str = "local", **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
         
         # 환경별 설정
-        self.environment = environment
-        self.domain_name = domain_name
+        self._environment = environment
+        self._domain_name = domain_name
         
         # 환경별 버킷 이름 생성
         if environment == "prod":
-            bucket_name = f"title-generator-frontend-prod"
-            bucket_description = "Title Generator 프로덕션 프론트엔드"
+            bucket_name = f"chatbot-frontend-prod"
+            bucket_description = "Chatbot 프로덕션 프론트엔드"
         elif environment == "dev":
-            bucket_name = f"title-generator-frontend-dev"
-            bucket_description = "Title Generator 개발 프론트엔드"
+            bucket_name = f"chatbot-frontend-dev"
+            bucket_description = "Chatbot 개발 프론트엔드"
         else:
             # local 환경
-            bucket_name = f"title-generator-frontend-local-{self.account}-{self.region}"
-            bucket_description = "Title Generator 로컬 개발 프론트엔드"
+            bucket_name = f"chatbot-frontend-local-{self.account}-{self.region}"
+            bucket_description = "Chatbot 로컬 개발 프론트엔드"
         
         print(f"🪣 Creating S3 bucket: {bucket_name} for {environment.upper()} environment")
         
@@ -170,20 +170,20 @@ class FrontendStack(Stack):
         }
         
         # 커스텀 도메인이 설정된 경우 인증서와 도메인 추가
-        if self.domain_name:
+        if self._domain_name:
             try:
                 # DNS 검증 인증서 생성
                 certificate = acm.Certificate(
                     self, "Certificate",
-                    domain_name=self.domain_name,
+                    domain_name=self._domain_name,
                     validation=acm.CertificateValidation.from_dns()
                 )
                 
                 # CloudFront에 도메인과 인증서 설정
                 distribution_props["certificate"] = certificate
-                distribution_props["domain_names"] = [self.domain_name]
+                distribution_props["domain_names"] = [self._domain_name]
                 
-                print(f"커스텀 도메인 설정: {self.domain_name}")
+                print(f"커스텀 도메인 설정: {self._domain_name}")
                 
             except Exception as e:
                 print(f"도메인 설정 실패, 기본 CloudFront 도메인 사용: {e}")
@@ -209,7 +209,7 @@ class FrontendStack(Stack):
             )
         
         # 출력값
-        website_url = f"https://{self.domain_name}" if self.domain_name else f"https://{self.distribution.distribution_domain_name}"
+        website_url = f"https://{self._domain_name}" if self._domain_name else f"https://{self.distribution.distribution_domain_name}"
         CfnOutput(
             self, "WebsiteURL",
             value=website_url,
@@ -218,10 +218,10 @@ class FrontendStack(Stack):
         )
         
         # 커스텀 도메인이 있는 경우 추가 출력
-        if self.domain_name:
+        if self._domain_name:
             CfnOutput(
                 self, "CustomDomain",
-                value=self.domain_name,
+                value=self._domain_name,
                 description="Custom Domain Name",
                 export_name="CustomDomain"
             )

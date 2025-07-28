@@ -18,8 +18,8 @@ logger = logging.getLogger()
 logger.setLevel(os.environ.get("LOG_LEVEL", "INFO"))
 
 # AWS 클라이언트 초기화
-dynamodb = boto3.resource('dynamodb', region_name=os.environ.get('REGION', 'us-east-1'))
-cognito_client = boto3.client('cognito-idp', region_name=os.environ.get('REGION', 'us-east-1'))
+dynamodb = boto3.resource('dynamodb', region_name=os.environ.get('REGION', 'ap-northeast-2'))
+cognito_client = boto3.client('cognito-idp', region_name=os.environ.get('REGION', 'ap-northeast-2'))
 
 # 테이블 참조
 users_table = dynamodb.Table(os.environ['USERS_TABLE'])

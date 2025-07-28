@@ -1,2 +1,2 @@
-# No special dependencies are needed anymore.
+# urllib를 사용하므로 외부 의존성 없음
 # boto3 is included in the AWS Lambda runtime by default. 

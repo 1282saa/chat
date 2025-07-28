@@ -1,0 +1,485 @@
+import React, { useState, useEffect } from "react";
+import {
+  PlusIcon,
+  ChatBubbleLeftRightIcon,
+  XMarkIcon,
+  ArrowPathIcon,
+  SparklesIcon,
+} from "@heroicons/react/24/outline";
+import { useConversations } from "../../hooks/useConversations";
+import { useConversationContext } from "../../contexts/ConversationContext";
+
+const ConversationDrawer = ({ isOpen, onClose, className = "", onCollapsedChange }) => {
+  const {
+    conversations,
+    loading,
+    error,
+    hasMore,
+    loadMore,
+    refresh,
+    createConversation,
+  } = useConversations();
+
+  const { currentConversationId, setCurrentConversation } =
+    useConversationContext();
+
+  const [isCreating, setIsCreating] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMemoryExpanded, setIsMemoryExpanded] = useState(false);
+  const [createError, setCreateError] = useState(null);
+
+  // 새 대화 생성
+  const handleNewChat = async () => {
+    if (isCreating) return;
+
+    console.log("새 대화 생성 시작");
+    setIsCreating(true);
+    setCreateError(null);
+
+    try {
+      const newConversation = await createConversation("새 대화");
+      console.log("새 대화 생성 성공:", newConversation);
+
+      setCurrentConversation(newConversation.id);
+
+      // 모바일에서는 드로어 닫기
+      if (window.innerWidth < 768) {
+        onClose();
+      }
+    } catch (error) {
+      console.error("새 대화 생성 실패:", error);
+      setCreateError("새 대화를 생성할 수 없습니다. 다시 시도해주세요.");
+
+      // 3초 후 에러 메시지 자동 삭제
+      setTimeout(() => setCreateError(null), 3000);
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  // 대화 선택
+  const handleSelectConversation = (conversationId) => {
+    console.log('ConversationDrawer - 대화 선택:', {
+      selectedConversationId: conversationId,
+      currentConversationId: currentConversationId,
+      isChanged: conversationId !== currentConversationId
+    });
+    
+    setCurrentConversation(conversationId);
+
+    // 모바일에서는 드로어 닫기
+    if (window.innerWidth < 768) {
+      onClose();
+    }
+  };
+
+  // 대화 목록을 섹션별로 그룹화
+  const groupConversationsByDate = (conversations) => {
+    const groups = {};
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    // 중복된 "새 대화" 항목 필터링
+    const filteredConversations = conversations.filter(
+      (conversation, index, arr) => {
+        // "새 대화" 제목인 경우 최신 것만 유지 (첫 번째 발견된 것만 유지)
+        if (
+          conversation.title === "새 대화" ||
+          conversation.title === "New chat"
+        ) {
+          const firstNewChatIndex = arr.findIndex(
+            (c) => c.title === conversation.title
+          );
+          return index === firstNewChatIndex;
+        }
+        return true;
+      }
+    );
+
+    filteredConversations.forEach((conversation) => {
+      const date = new Date(
+        conversation.lastActivityAt || conversation.createdAt
+      );
+      const isToday = date.toDateString() === today.toDateString();
+      const isYesterday = date.toDateString() === yesterday.toDateString();
+
+      let key;
+      if (isToday) {
+        key = "Today";
+      } else if (isYesterday) {
+        key = "Yesterday";
+      } else {
+        key = date.toLocaleDateString("ko-KR", {
+          year: "numeric",
+          month: "long",
+        });
+      }
+
+      if (!groups[key]) {
+        groups[key] = [];
+      }
+      groups[key].push(conversation);
+    });
+
+    return groups;
+  };
+
+  const formatLastActivity = (timestamp) => {
+    if (!timestamp) return "";
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffInMinutes = Math.floor((now - date) / 60000);
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+
+    if (diffInMinutes < 1) return "방금 전";
+    if (diffInMinutes < 60) return `${diffInMinutes}분 전`;
+    if (diffInHours < 24) return `${diffInHours}시간 전`;
+    if (diffInDays < 7) return `${diffInDays}일 전`;
+    return date.toLocaleDateString("ko-KR", { month: "short", day: "numeric" });
+  };
+
+  const conversationGroups = groupConversationsByDate(conversations);
+
+  return (
+    <>
+      {/* 모바일 오버레이 */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 md:hidden transition-opacity duration-300"
+          onClick={onClose}
+        />
+      )}
+
+      {/* 드로어 컨테이너 */}
+      <div
+        className={`
+        fixed top-0 left-0 h-full z-[9999]
+        bg-gradient-to-b from-blue-900 via-blue-950 to-slate-900
+        border-r-2 border-blue-800/30 shadow-2xl shadow-blue-900/50
+        before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-blue-400/5 before:to-blue-300/10 before:pointer-events-none
+        transform transition-all duration-300 ease-in-out
+        ${isOpen ? "translate-x-0" : "-translate-x-full"}
+        md:translate-x-0
+        ${isCollapsed ? "w-16" : "w-full md:w-80"}
+        ${className}
+      `}
+      >
+        {/* 입체적인 상단 테두리 */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400/30 via-blue-300/50 to-blue-400/30"></div>
+
+        {/* 헤더 */}
+        <div className="flex items-center justify-between p-5 border-b border-blue-800/30 bg-blue-950/80 backdrop-blur-sm relative">
+          {/* 헤더 내부 글로우 효과 */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-400/5 to-transparent pointer-events-none"></div>
+
+          {!isCollapsed && (
+            <h1 className="text-2xl font-semibold tracking-tight text-white drop-shadow-lg relative z-10">
+              TITLE-NOMICS
+            </h1>
+          )}
+          
+          <button
+            onClick={() => {
+              const newCollapsed = !isCollapsed;
+              setIsCollapsed(newCollapsed);
+              onCollapsedChange?.(newCollapsed);
+            }}
+            className="p-2 rounded-lg hover:bg-blue-800/40 transition-colors duration-200 text-blue-200 hover:text-white relative z-10 ml-auto"
+            title={isCollapsed ? "사이드바 펼치기" : "사이드바 접기"}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className={`h-5 w-5 transition-transform duration-200 ${isCollapsed ? 'rotate-180' : ''}`}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+            </svg>
+          </button>
+        </div>
+
+        {/* 대화 메모리창 섹션 */}
+        {!isCollapsed && (
+        <div className="border-b border-blue-800/30 relative">
+          {/* 배경 글로우 */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-400/3 to-transparent pointer-events-none"></div>
+
+          {/* 메모리 토글 버튼 */}
+          <button
+            onClick={() => setIsMemoryExpanded(!isMemoryExpanded)}
+            className="w-full flex items-center justify-between p-4 text-blue-200 hover:text-white hover:bg-blue-800/20 transition-all duration-200 relative z-10"
+          >
+            <div className="flex items-center space-x-3">
+              <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium">대화 메모리</span>
+            </div>
+            <svg
+              className={`w-4 h-4 transition-transform duration-200 ${
+                isMemoryExpanded ? "rotate-180" : ""
+              }`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+
+          {/* 메모리 콘텐츠 */}
+          <div
+            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+              isMemoryExpanded ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+            }`}
+          >
+            <div className="p-4 pt-0 space-y-3 relative z-10">
+              <div className="text-xs text-blue-300 opacity-80 mb-3">
+                현재 대화의 주요 포인트와 컨텍스트가 여기에 표시됩니다.
+              </div>
+
+              {/* 메모리 아이템들 */}
+              <div className="space-y-2">
+                <div className="p-3 bg-blue-900/30 rounded-lg border border-blue-800/20">
+                  <div className="text-xs text-blue-200 opacity-60 mb-1">
+                    주제
+                  </div>
+                  <div className="text-sm text-blue-100">
+                    UI 디자인 개선 요청
+                  </div>
+                </div>
+                <div className="p-3 bg-blue-900/30 rounded-lg border border-blue-800/20">
+                  <div className="text-xs text-blue-200 opacity-60 mb-1">
+                    진행상황
+                  </div>
+                  <div className="text-sm text-blue-100">
+                    사이드바 스타일링 완료
+                  </div>
+                </div>
+                <div className="p-3 bg-blue-900/30 rounded-lg border border-blue-800/20">
+                  <div className="text-xs text-blue-200 opacity-60 mb-1">
+                    다음 단계
+                  </div>
+                  <div className="text-sm text-blue-100">
+                    메모리창 기능 구현
+                  </div>
+                </div>
+              </div>
+
+              {/* 메모리 관리 버튼들 */}
+              <div className="flex space-x-2 pt-2">
+                <button className="flex-1 px-3 py-1.5 text-xs bg-blue-800/30 hover:bg-blue-700/40 text-blue-200 rounded-lg transition-colors duration-200 border border-blue-700/30">
+                  새로고침
+                </button>
+                <button className="flex-1 px-3 py-1.5 text-xs bg-blue-800/30 hover:bg-blue-700/40 text-blue-200 rounded-lg transition-colors duration-200 border border-blue-700/30">
+                  초기화
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        )}
+
+        {/* 새 대화 버튼 */}
+        {!isCollapsed && (
+        <div className="p-5 border-b border-blue-800/30 relative">
+          {/* 배경 글로우 */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-400/3 to-transparent pointer-events-none"></div>
+
+          <button
+            onClick={handleNewChat}
+            disabled={isCreating}
+            className="w-full flex items-center justify-center space-x-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 disabled:from-blue-700 disabled:to-blue-800 text-white rounded-xl font-semibold text-sm tracking-tight transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] outline-offset-2 shadow-lg hover:shadow-xl disabled:shadow-sm border border-blue-500/30 hover:border-blue-400/50 relative z-10"
+          >
+            {isCreating ? (
+              <ArrowPathIcon className="h-4 w-4 animate-spin" />
+            ) : (
+              <SparklesIcon className="h-4 w-4" />
+            )}
+            <span>New chat</span>
+          </button>
+
+          {/* 에러 메시지 */}
+          {createError && (
+            <div className="mt-3 p-2 bg-red-900/30 border border-red-700/50 rounded-lg relative z-10">
+              <p className="text-xs text-red-300 text-center">{createError}</p>
+            </div>
+          )}
+        </div>
+        )}
+
+        {/* 대화 목록 */}
+        <div className="flex-1 overflow-y-auto p-5 space-y-3 scrollbar-thin scrollbar-thumb-blue-700/60 scrollbar-track-transparent relative">
+          {/* 목록 영역 배경 글로우 */}
+          <div className="absolute inset-0 bg-gradient-to-b from-blue-400/2 via-transparent to-blue-400/2 pointer-events-none"></div>
+
+          <div className="relative z-10">
+            {error && !isCollapsed && (
+              <div className="p-4 text-center bg-red-900/30 rounded-lg border border-red-700/50 shadow-inner">
+                <div className="text-red-300 text-sm font-medium">{error}</div>
+              </div>
+            )}
+
+            {conversations.length === 0 &&
+              !loading &&
+              !error &&
+              !isCollapsed && (
+                <div className="p-6 text-center">
+                  <div className="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-blue-800/50 to-blue-900/50 rounded-2xl flex items-center justify-center shadow-lg border border-blue-700/30">
+                    <ChatBubbleLeftRightIcon className="h-6 w-6 text-blue-300" />
+                  </div>
+                  <h3 className="text-sm font-medium text-white mb-2 drop-shadow">
+                    아직 대화가 없습니다
+                  </h3>
+                  <p className="text-xs text-blue-200 leading-snug opacity-80">
+                    새 대화를 시작해서 AI와 대화해보세요!
+                  </p>
+                </div>
+              )}
+
+            {/* 스켈레톤 로딩 */}
+            {loading && conversations.length === 0 && !isCollapsed && (
+              <div className="space-y-2">
+                {[...Array(5)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="px-3 py-2 rounded-lg bg-blue-900/40 animate-pulse border border-blue-800/20"
+                  >
+                    <div className="h-4 bg-blue-700/40 rounded mb-2"></div>
+                    <div className="flex justify-between items-center">
+                      <div className="h-3 bg-blue-700/30 rounded w-16"></div>
+                      <div className="h-3 bg-blue-700/30 rounded w-12"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* 섹션별 대화 목록 */}
+            {!isCollapsed &&
+              Object.entries(conversationGroups).map(
+                ([sectionTitle, sectionConversations]) => (
+                  <div key={sectionTitle} className="space-y-1">
+                    <h4 className="text-xs uppercase opacity-60 mb-2 text-blue-200 font-medium tracking-wider drop-shadow-sm">
+                      {sectionTitle}
+                    </h4>
+                    {sectionConversations.map((conversation) => (
+                      <button
+                        key={conversation.id}
+                        onClick={() =>
+                          handleSelectConversation(conversation.id)
+                        }
+                        aria-current={
+                          currentConversationId === conversation.id
+                            ? "page"
+                            : undefined
+                        }
+                        className={`
+                      w-full text-left px-3 py-2 rounded-lg transition-all duration-200 truncate outline-offset-2 group border shadow-sm relative overflow-hidden
+                      ${
+                        currentConversationId === conversation.id
+                          ? "bg-blue-700/50 text-white border-blue-600/50 shadow-md backdrop-blur-sm before:absolute before:inset-0 before:bg-gradient-to-r before:from-blue-400/10 before:to-transparent before:pointer-events-none"
+                          : "hover:bg-blue-800/30 text-blue-100 hover:text-white border-blue-800/20 hover:border-blue-700/40 hover:shadow-md hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-blue-400/5 hover:before:to-transparent hover:before:pointer-events-none"
+                      }
+                    `}
+                      >
+                        <div className="relative z-10">
+                          <h3 className="text-sm font-medium truncate leading-snug drop-shadow-sm mb-2">
+                            {conversation.title}
+                          </h3>
+                          <div className="flex items-center justify-between">
+                            <p className="text-xs text-blue-200 opacity-80">
+                              {formatLastActivity(conversation.lastActivityAt)}
+                            </p>
+                            {conversation.tokenSum > 0 && (
+                              <span className="text-xs font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 px-2.5 py-1 rounded-full shadow-sm">
+                                {conversation.tokenSum.toLocaleString()}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )
+              )}
+
+            {/* Collapsed 모드 대화 목록 */}
+            {isCollapsed && (
+              <div className="space-y-2">
+                {conversations.slice(0, 10).map((conversation) => (
+                  <button
+                    key={conversation.id}
+                    onClick={() => handleSelectConversation(conversation.id)}
+                    aria-current={
+                      currentConversationId === conversation.id
+                        ? "page"
+                        : undefined
+                    }
+                    title={conversation.title}
+                    className={`
+                      w-full p-2 rounded-lg transition-all duration-200 outline-offset-2 border shadow-sm relative overflow-hidden
+                      ${
+                        currentConversationId === conversation.id
+                          ? "bg-blue-700/50 border-blue-600/50 shadow-md before:absolute before:inset-0 before:bg-gradient-to-r before:from-blue-400/10 before:to-transparent before:pointer-events-none"
+                          : "hover:bg-blue-800/30 border-blue-800/20 hover:border-blue-700/40 hover:shadow-md hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-blue-400/5 hover:before:to-transparent hover:before:pointer-events-none"
+                      }
+                    `}
+                  >
+                    <ChatBubbleLeftRightIcon className="h-4 w-4 text-blue-200 mx-auto relative z-10" />
+                  </button>
+                ))}
+                
+                {/* 접힌 상태에서 새 대화 버튼 */}
+                <button
+                  onClick={handleNewChat}
+                  disabled={isCreating}
+                  className="w-full p-2 bg-blue-600/80 hover:bg-blue-600 disabled:bg-blue-700/50 rounded-lg transition-all duration-200 border border-blue-500/50"
+                  title="새 대화"
+                >
+                  {isCreating ? (
+                    <ArrowPathIcon className="h-4 w-4 animate-spin text-white mx-auto" />
+                  ) : (
+                    <SparklesIcon className="h-4 w-4 text-white mx-auto" />
+                  )}
+                </button>
+              </div>
+            )}
+
+            {/* 로딩 인디케이터 */}
+            {loading && (
+              <div className="p-4 text-center">
+                <ArrowPathIcon className="h-5 w-5 animate-spin mx-auto text-blue-300" />
+                {!isCollapsed && (
+                  <p className="text-xs text-blue-200 mt-2 opacity-80">
+                    대화 목록을 불러오는 중...
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* 더 불러올 수 있는 항목이 있는 경우 */}
+            {hasMore &&
+              !loading &&
+              conversations.length > 0 &&
+              !isCollapsed && (
+                <div className="p-4 text-center">
+                  <button
+                    onClick={loadMore}
+                    className="text-xs text-blue-300 hover:text-blue-200 transition-colors duration-200 border border-blue-700/30 hover:border-blue-600/50 px-3 py-1 rounded-lg hover:bg-blue-800/20"
+                  >
+                    더 보기
+                  </button>
+                </div>
+              )}
+          </div>
+        </div>
+
+        {/* 하단 입체적인 테두리 */}
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400/20 via-blue-300/30 to-blue-400/20"></div>
+      </div>
+    </>
+  );
+};
+
+export default ConversationDrawer;

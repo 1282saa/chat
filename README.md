@@ -1,10 +1,10 @@
-# AI Title Generation System
+# Seoul Economic News Summarizer System
 
-A scalable, serverless AI-powered title generation system built on AWS infrastructure using AWS Bedrock Claude 3 Sonnet model. This system provides intelligent title suggestions for various content types with real-time streaming capabilities and advanced performance optimizations.
+A scalable, serverless AI-powered news summarization system built on AWS infrastructure using AWS Bedrock Claude 3 Sonnet model with Knowledge Base integration. This system provides intelligent news article summarization using vector search capabilities through Amazon OpenSearch Serverless and S3-based document storage.
 
 ## Table of Contents
 
-- [Service Overview](#ai-title-generation-system)
+- [Service Overview](#seoul-economic-news-summarizer-system)
 - [Architecture Overview](#architecture-overview)
 - [Key Design Decisions](#key-design-decisions)
 - [Implementation Timeline](#implementation-timeline)

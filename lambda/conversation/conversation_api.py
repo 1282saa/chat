@@ -25,9 +25,14 @@ def handler(event, context):
         
         # Extract user info from Cognito JWT
         try:
-            user_sub = event['requestContext']['authorizer']['claims']['sub']
+            authorizer = event['requestContext']['authorizer']
+            user_sub = authorizer.get('userId') or authorizer.get('principalId')
+            user_email = authorizer.get('email')
+            
             if not user_sub:
-                raise ValueError("User sub not found in claims")
+                raise ValueError("User sub not found in authorizer")
+                
+            print(f"Authenticated user: {user_sub} ({user_email})")
         except Exception as e:
             print(f"Authentication error: {str(e)}")
             print(f"Event requestContext: {event.get('requestContext', {})}")

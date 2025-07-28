@@ -9,7 +9,7 @@ from aws_cdk import (
 )
 from constructs import Construct
 
-class ConversationStack(Stack):
+class ChatbotConversationStack(Stack):
     """
     CDK Stack for Conversation History functionality
     - DynamoDB tables for Conversations and Messages
@@ -34,7 +34,7 @@ class ConversationStack(Stack):
         """Create Conversations table with GSI for user queries"""
         table = dynamodb.Table(
             self, "ConversationsTable",
-            table_name="Conversations",
+            table_name="ChatbotConversations",
             partition_key=dynamodb.Attribute(
                 name="PK",  # USER#<cognito_sub>
                 type=dynamodb.AttributeType.STRING
@@ -68,7 +68,7 @@ class ConversationStack(Stack):
         """Create Messages table for storing conversation messages"""
         table = dynamodb.Table(
             self, "MessagesTable", 
-            table_name="Messages",
+            table_name="ChatbotMessages",
             partition_key=dynamodb.Attribute(
                 name="PK",  # CONV#<uuid>
                 type=dynamodb.AttributeType.STRING
