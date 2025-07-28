@@ -150,3 +150,19 @@ temp/
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Lambda layers and built dependencies
+lambda_layers/python/
+lambda_layers/langchain-layer.zip
+lambda/*/package/
+lambda/*/*.zip
+
+# Build artifacts and deployment packages
+*.zip
+!source-code.zip  # 소스코드 백업용 zip은 예외
+cdk/cdk.out/
+cdk.out/
+
+# Dependency lock files (keep package.json and requirements.txt only)
+package-lock.json
+yarn.lock
